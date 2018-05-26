@@ -1,5 +1,21 @@
 Vapor App:
-	
+	- determine public folder structure
+	- make base theme
+	- add get routes for posts
+	- archive pages
+	- static pages
+	Feeds:
+		- full text rss
+		- full text json
+		- microblog rss
+		- microblog json
+	API:
+		- micropub
+		- XML RPC
 Server Config:
-
+	- nginx config
+	- letsencrypt with Acme
+		https://github.com/Neilpang/acme.sh
+	Docker:
+		- add nginx container @nonblocker
 Publishing:
