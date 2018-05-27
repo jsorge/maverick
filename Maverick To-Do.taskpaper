@@ -1,9 +1,6 @@
 Vapor App:
 	- determine public folder structure
 	- make base theme
-	- add get routes for posts
-	- archive pages
-	- static pages
 	Feeds:
 		- full text rss
 		- full text json
@@ -12,6 +9,21 @@ Vapor App:
 	API:
 		- micropub
 		- XML RPC
+	Routing:
+		- add get routes for posts
+		- archive pages
+		- static pages
+		1. Request comes in for 2018/05/21/rebuilding-taphouse-io/
+		1. Determine the textbundle filename from the path
+		1. Look up the file in Public/_posts
+		1. Parse the frontmatter to determine the layout
+		1. Resolve the image links in the markdown to `../<filename>/assets/<imagename>`
+		1. Convert the markdown to html
+		1. Pass the data to the theme
+	Caching:
+		- Figure out how to cache the rendered theme (if that’s possible) @nonblocker
+		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.
+		Cache should apply to all pages. When a new post is created the cache goes away completely for rebuilding.
 Server Config:
 	- nginx config
 	- letsencrypt with Acme
