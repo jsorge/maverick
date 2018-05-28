@@ -13,7 +13,7 @@ Vapor App:
 		- add get routes for posts
 		- archive pages
 		- static pages
-		1. Request comes in for 2018/05/21/rebuilding-taphouse-io/
+		1. Request comes in for /2018/04/08/hawaii-trip/
 		1. Determine the textbundle filename from the path
 		1. Look up the file in Public/_posts
 		1. Parse the frontmatter to determine the layout

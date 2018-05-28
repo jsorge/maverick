@@ -1,0 +1,21 @@
+#set(content) {
+	<main class="content" role="main">
+		<div id="outer">
+			<div id="postList">
+				#for(post in postList.posts) {
+					#embed(singlePost)
+				}		
+			</div>
+		</div>
+	</main>
+
+	<nav class="pagination" role="navigation">
+		#if(postList.pagination.newerLink) {
+			<a class="newer-posts" href="#(postList.pagination.newerLink)"><span aria-hidden="true">&larr;</span> Newer Posts</a>
+		}
+		<span class="page-number">#(postList.pagination.pageNumber)</span>
+		<a class="older-posts" href="#(postList.pagination.olderLink)">Older Posts <span aria-hidden="true">&rarr;</span></a>
+	</nav>
+}
+
+#embed(base)

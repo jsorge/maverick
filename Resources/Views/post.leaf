@@ -1,0 +1,7 @@
+#set(content) {
+	<main class="content" role="main">
+		#embed(singlePost)
+	</main>
+}
+
+#embed(base)

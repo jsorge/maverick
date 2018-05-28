@@ -1,0 +1,9 @@
+<article class="post">
+	<span class="post-meta"><time datetime="#(post.date)">#(post.formattedDate)</time></span>
+	#if(post.title) {
+		<h2 class="post-title">#(post.title)</h1>
+	}
+	<section class="post-content">
+		#(post.content)
+	</section>		
+</article>
