@@ -13,7 +13,7 @@ struct PostList: Codable {
 }
 
 /// Placed at the bottom of post listing pages
-struct Pagination {
+struct Pagination: Codable {
     /// Newer posts. Path only (like "/page/5". For home, supply "/".
     let newerLink: String?
     /// Older posts. Path only (like "/page/3")

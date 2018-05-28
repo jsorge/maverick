@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>#(site.metaTitle)</title>
-    <meta name="description" content="I'm Jared Sorge and this is my website. I'm a Christian, husband, dad, developer, and batman aficianado." />
+    <title>#(title)</title>
+    <meta name="description" content="$site.metaDescription" />
     	
 
     <meta name="HandheldFriendly" content="True" />
