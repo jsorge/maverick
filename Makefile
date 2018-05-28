@@ -9,3 +9,7 @@ docker-run:
 .PHONY: xcodegen
 xcodegen:
 	swift package generate-xcodeproj
+	
+.PHONY: update
+update:
+	swift package update
