@@ -31,3 +31,4 @@ Server Config:
 	Docker:
 		- add nginx container @nonblocker
 Publishing:
+	- write blog post
