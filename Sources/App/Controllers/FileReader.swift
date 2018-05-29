@@ -76,7 +76,7 @@ private final class RawPost {
             frontMatter.append(text)
             
         case .content:
-            content.append(text)
+            content.append("\n\(text)")
         }
     }
 }
