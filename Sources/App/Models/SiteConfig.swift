@@ -19,5 +19,9 @@ struct SiteConfig: Codable {
     /// The base URL of the site.
     let url: URL
     /// The year to go in the footer.
-    let year: String
+    var year: String {
+        let calendar = Calendar.current
+        let date = Date()
+        return "\(calendar.component(.year, from: date))"
+    }
 }

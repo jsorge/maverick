@@ -1,9 +1,21 @@
-#set(content) {
+#set("content") {
 	<main class="content" role="main">
 		<div id="outer">
 			<div id="postList">
 				#for(post in postList.posts) {
-					#embed(singlePost)
+					<main class="content" role="main">
+						<article class="post">
+							#if(style.post.date) {
+								<span class="post-meta"><time datetime="#(style.post.date)">#(style.post.formattedDate)</time></span>
+							}
+							#if(style.post.title) {
+								<h2 class="post-title">#(style.post.title)</h1>
+							}
+							<section class="post-content">
+								#(style.post.content)
+							</section>		
+						</article>
+					</main>
 				}		
 			</div>
 		</div>
@@ -18,4 +30,66 @@
 	</nav>
 }
 
-#embed(base)
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>#(title)</title>
+
+    <meta name="description" content="#(site.metaDescription)" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="favicon.ico"">
+
+    <link rel="stylesheet" type="text/css" href="styles/screen.css"" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+    <link rel="stylesheet" type="text/css" href="styles/prism.css" />
+
+    <script>
+	</script>
+</head>
+<body class="home-template">
+	<header class="site-head">
+		<link rel="icon" type="image/png" href="/favicon.ico" />
+    	<div class="vertical">
+        	<div class="site-head-content inner">
+	        	<a href="#(site.url)">
+	            	<h1 class="blog-title">#(site.title)</h1>
+		            <h2 class="blog-description">#(site.description)</h2>
+		        </a>
+        	</div>
+	        <div class="headerLinks" style="text-decoration: underline; margin-top: 15px;">
+				<a href="/about">About</a><span class="blog-description"> | </span> | <a href="http://taphouse.io/?utm_source=jsorge.net">Taphouse Software</a><span class="blog-description"> | </span> | <a href="#(site.url)/rss/">RSS</a><span class="blog-description"> | </span> | <a href="https://twitter.com/jsorgenet">Twitter</a>
+        	</div>
+    	</div>
+	</header>
+
+	#get(content)
+	
+	<footer class="site-footer">
+        <div class="inner">
+	        <form method="get" id="search" action="http://duckduckgo.com/">
+			   <input type="hidden" name="sites"value="jsorge.net"/>
+			   <input type="hidden" name="ka" value="h"/>
+			   <input type="hidden" name="k7" value="#fafafa"/>
+			   <input type="hidden" name="kj" value="#3f3f3f"/>
+			   <input type="hidden" name="ky" value="#fafafa"/>
+			   <input type="hidden" name="kx" value="b"/>
+			   <input type="text" name="q" maxlength="255"/>
+			   <input type="submit" value="Search" />
+			</form>
+			
+            <section class="copyright">All content copyright <a href="#(site.url)/">#(site.title)</a> &copy; #(site.year) &bull; All rights reserved.</section>
+        </div>
+    </footer>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="scripts/index.js"></script>
+    <script type="text/javascript" src="scripts/prism.js"></script>
+</body>
+</html>
