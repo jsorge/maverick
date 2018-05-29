@@ -1,6 +1,9 @@
 #set("content") {
 <main class="content" role="main">
 		<article class="post">
+			#if(style.post.date) {
+				<span class="post-meta"><time datetime="#(style.post.date)">#(style.post.formattedDate)</time></span>
+			}
 			#if(style.post.title) {
 				<h2 class="post-title">#(style.post.title)</h1>
 			}

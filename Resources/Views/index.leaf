@@ -12,7 +12,7 @@
 								<h2 class="post-title">#(style.post.title)</h1>
 							}
 							<section class="post-content">
-								#(style.post.content)
+								#get(style.post.content)
 							</section>		
 						</article>
 					</main>

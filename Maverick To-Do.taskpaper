@@ -1,6 +1,6 @@
 Vapor App:
-	- determine public folder structure
-	- make base theme
+	- determine public folder structure @done
+	- make base theme @done
 	Feeds:
 		- full text rss
 		- full text json
@@ -10,9 +10,10 @@ Vapor App:
 		- micropub
 		- XML RPC
 	Routing:
-		- add get routes for posts
+		- add get routes for posts @done
+			- fix rendering output. Works on statics but not on posts
 		- archive pages
-		- static pages
+		- static pages @done
 		1. Request comes in for /2018/04/08/hawaii-trip/
 		1. Determine the textbundle filename from the path
 		1. Look up the file in Public/_posts
@@ -28,7 +29,11 @@ Server Config:
 	- nginx config
 	- letsencrypt with Acme
 		https://github.com/Neilpang/acme.sh
+	- fail2ban @nonblocker
+		- https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04
 	Docker:
 		- add nginx container @nonblocker
+	- Matomo analytics
+		https://oleb.net/blog/2018/05/how-i-do-analytics/
 Publishing:
 	- write blog post
