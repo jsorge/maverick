@@ -6,13 +6,23 @@
 //
 
 import Foundation
+import PathKit
+import Vapor
 
 enum StaticPageError: Error {
     case fileNotFound
 }
 
 struct StaticPageController {
-    static private(set) var registeredPages = ["about"]
+    static private(set) var registeredPages: [String] = {
+        let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.pages.rawValue)")
+        do {
+            let children = try dirPath.children()
+            return children.map { $0.lastComponentWithoutExtension }
+        } catch {
+            return []
+        }
+    }()
     
     static func fetchStaticPage(named pageName: String) throws -> Post {
         guard self.registeredPages.contains(pageName) else { throw StaticPageError.fileNotFound }
