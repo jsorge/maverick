@@ -1,3 +1,5 @@
+# brew cask install docker
+
 .PHONY: up
 up:
 	docker-compose up --build
