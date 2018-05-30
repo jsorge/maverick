@@ -9,12 +9,8 @@ import Foundation
 import PathKit
 import Vapor
 
-enum StaticPageError: Error {
-    case fileNotFound
-}
-
 struct StaticPageController {
-    static private(set) var registeredPages: [String] = {
+    static var registeredPages: [String] {
         let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.pages.rawValue)")
         do {
             let children = try dirPath.children()
@@ -22,11 +18,9 @@ struct StaticPageController {
         } catch {
             return []
         }
-    }()
-    
+    }
+
     static func fetchStaticPage(named pageName: String) throws -> Post {
-        guard self.registeredPages.contains(pageName) else { throw StaticPageError.fileNotFound }
-        
         let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
         let post = Post(date: nil,
                         url: "/\(pageName)",
