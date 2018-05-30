@@ -18,6 +18,8 @@ struct SiteConfig: Codable {
     let description: String
     /// The base URL of the site.
     let url: URL
+    /// The number of posts to include when listing posts
+    let batchSize: Int
     /// The year to go in the footer.
     var year: String {
         let calendar = Calendar.current

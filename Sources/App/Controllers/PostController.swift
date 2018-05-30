@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PathKit
 
 struct PostPath {
     let year: Int
@@ -19,6 +20,30 @@ struct PostPath {
     
     var asFilepath: String {
         return "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))-\(slug)"
+    }
+    
+    init(year: Int, month: Int, day: Int, slug: String) {
+        self.year = year
+        self.month = month
+        self.day = day
+        self.slug = slug
+    }
+    
+    init?(path: Path) {
+        guard path.string.contains(".DS_Store") == false else { return nil }
+        
+        var components = path.lastComponentWithoutExtension.split(separator: "-")
+        let _day = components[2]
+        let _month = components[1]
+        let _year = components[0]
+        let slug = components.dropFirst(3).joined(separator: "-")
+        
+        guard let day = Int(_day), let month = Int(_month), let year = Int(_year) else { return nil }
+        
+        self.year = year
+        self.month = month
+        self.day = day
+        self.slug = String(slug)
     }
 }
 

@@ -11,7 +11,7 @@ Vapor App:
 		- XML RPC
 	Routing:
 		- add get routes for posts @done
-			- fix rendering output. Works on statics but not on posts
+			- fix rendering output. Works on statics but not on posts @done
 		- archive pages
 		- static pages @done
 		1. Request comes in for /2018/04/08/hawaii-trip/
@@ -21,6 +21,12 @@ Vapor App:
 		1. Resolve the image links in the markdown to `../<filename>/assets/<imagename>`
 		1. Convert the markdown to html
 		1. Pass the data to the theme
+	Bugs:
+		- dates aren't working anywhere
+			- footer
+			- above a post title
+		- pagination not wired correctly
+		- ordering of post lists isn't correct
 	Caching:
 		- Figure out how to cache the rendered theme (if that’s possible) @nonblocker
 		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.

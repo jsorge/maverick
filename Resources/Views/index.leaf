@@ -2,17 +2,17 @@
 	<main class="content" role="main">
 		<div id="outer">
 			<div id="postList">
-				#for(post in postList.posts) {
+				#for(post in style.list.posts) {
 					<main class="content" role="main">
 						<article class="post">
-							#if(style.post.date) {
-								<span class="post-meta"><time datetime="#(style.post.date)">#(style.post.formattedDate)</time></span>
+							#if(post.date) {
+								<span class="post-meta"><time datetime="#(post.date)">#(post.formattedDate)</time></span>
 							}
-							#if(style.post.title) {
-								<h2 class="post-title">#(style.post.title)</h1>
+							#if(post.title) {
+								<h2 class="post-title">#(post.title)</h1>
 							}
 							<section class="post-content">
-								#get(style.post.content)
+								#get(post.content)
 							</section>		
 						</article>
 					</main>
@@ -22,11 +22,11 @@
 	</main>
 
 	<nav class="pagination" role="navigation">
-		#if(postList.pagination.newerLink) {
-			<a class="newer-posts" href="#(postList.pagination.newerLink)"><span aria-hidden="true">&larr;</span> Newer Posts</a>
+		#if(style.list.pagination.newerLink) {
+			<a class="newer-posts" href="#(style.list.pagination.newerLink)"><span aria-hidden="true">&larr;</span> Newer Posts</a>
 		}
-		<span class="page-number">#(postList.pagination.pageNumber)</span>
-		<a class="older-posts" href="#(postList.pagination.olderLink)">Older Posts <span aria-hidden="true">&rarr;</span></a>
+		<span class="page-number">#(style.list.pagination.pageNumber)</span>
+		<a class="older-posts" href="#(style.list.pagination.olderLink)">Older Posts <span aria-hidden="true">&rarr;</span></a>
 	</nav>
 }
 
