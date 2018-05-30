@@ -70,3 +70,8 @@ fastlane/test_output
 # macOS
 .DS_Store
 *.xcodeproj
+
+# User data
+Public/_pages
+Public/_posts
+favicon.ico
