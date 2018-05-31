@@ -2,9 +2,6 @@
 
 Welcome to Maverick, a blog engine built to work with [textbundles](http://textbundle.org). It's kind of a cross between static sites (in that files are stored on and read from disk), and dynamic sites that have more complicated server logic and need some database running to contain everything.
 
-## Getting Started
-
-
 ## Why Textbundle?
 
 Typically you'll have your pages landing on your disk separate from the posts that contain them. I wanted to build a system where posts could be truly portable, and allowed maximum flexibility when adding new content to the site. Textbundles are themselves a folder structure that contain an `assets` folder for images, linked to by the enclosed markdown file inside the bundle. It's really nice.
