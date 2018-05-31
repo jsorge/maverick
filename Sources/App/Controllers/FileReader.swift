@@ -35,8 +35,10 @@ struct FileReader {
         }
         
         let raw = RawPost()
-        fileContents.enumerateLines { (text, _) in
-            raw.importText(text)
+        let lines = fileContents.split(maxSplits: Int.max, omittingEmptySubsequences: false,
+                                       whereSeparator: { return $0 == "\n"})
+        for line in lines {
+            raw.importText(String(line))
         }
         
         let decoder = YAMLDecoder()
