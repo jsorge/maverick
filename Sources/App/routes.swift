@@ -5,13 +5,18 @@ import Vapor
 ///
 /// [Learn More →](https://docs.vapor.codes/3.0/getting-started/structure/#routesswift)
 public func routes(_ router: Router) throws {
+    func fetchPostList(for page: Int, config: SiteConfig) throws -> Page {
+        let postList = try PostListController.fetchPostList(forPageNumber: page, config: config)
+        let outputPage = Page(style: .list(list: postList), site: config, title: config.title)
+        return outputPage
+    }
+
     let config = try SiteConfigController.fetchSite()
     
     router.get("") { req -> Future<View> in
         let leaf = try req.make(LeafRenderer.self)
-        let postList = try PostListController.fetchPostList(forPageNumber: 1, config: config)
-        let outputPage = Page(style: .list(list: postList), site: config, title: config.title)
-        return leaf.render("index", outputPage)
+        let page = try fetchPostList(for: 1, config: config)
+        return leaf.render("index", page)
     }
     
     for page in StaticPageController.registeredPages {
@@ -40,8 +45,7 @@ public func routes(_ router: Router) throws {
     router.get("page", Int.parameter) { req -> Future<View> in
         let leaf = try req.make(LeafRenderer.self)
         let page = try req.parameters.next(Int.self)
-        let postList = try PostListController.fetchPostList(forPageNumber: page, config: config)
-        let outputPage = Page(style: .list(list: postList), site: config, title: config.title)
+        let outputPage = try fetchPostList(for: page, config: config)
         return leaf.render("index", outputPage)
     }
 }

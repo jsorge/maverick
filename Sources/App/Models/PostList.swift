@@ -17,7 +17,7 @@ struct Pagination: Codable {
     /// Newer posts. Path only (like "/page/5". For home, supply "/".
     let newerLink: String?
     /// Older posts. Path only (like "/page/3")
-    let olderLink: String
+    let olderLink: String?
     /// Text in the middle (like "2 of 32")
     let pageNumber: String
 }

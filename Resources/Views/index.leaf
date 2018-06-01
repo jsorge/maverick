@@ -26,7 +26,9 @@
 			<a class="newer-posts" href="#(style.list.pagination.newerLink)"><span aria-hidden="true">&larr;</span> Newer Posts</a>
 		}
 		<span class="page-number">#(style.list.pagination.pageNumber)</span>
-		<a class="older-posts" href="#(style.list.pagination.olderLink)">Older Posts <span aria-hidden="true">&rarr;</span></a>
+		#if(style.list.pagination.olderLink) {
+			<a class="older-posts" href="#(style.list.pagination.olderLink)">Older Posts <span aria-hidden="true">&rarr;</span></a>
+		}
 	</nav>
 }
 
@@ -45,9 +47,9 @@
 
     <link rel="shortcut icon" href="favicon.ico"">
 
-    <link rel="stylesheet" type="text/css" href="styles/screen.css"" />
+    <link rel="stylesheet" type="text/css" href="/styles/screen.css"" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
-    <link rel="stylesheet" type="text/css" href="styles/prism.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/prism.css" />
 
     <script>
 	</script>
@@ -88,8 +90,8 @@
     </footer>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="scripts/jquery.fitvids.js"></script>
-    <script type="text/javascript" src="scripts/index.js"></script>
-    <script type="text/javascript" src="scripts/prism.js"></script>
+    <script type="text/javascript" src="/scripts/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/scripts/index.js"></script>
+    <script type="text/javascript" src="/scripts/prism.js"></script>
 </body>
 </html>

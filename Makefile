@@ -2,7 +2,7 @@
 
 .PHONY: up
 up:
-	docker-compose up --build
+	docker-compose --verbose up --build
 	
 .PHONY: docker-run
 docker-run:

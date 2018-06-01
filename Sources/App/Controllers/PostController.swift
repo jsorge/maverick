@@ -9,6 +9,8 @@ import Foundation
 import PathKit
 
 struct PostPath {
+    private static let filesToIgnore = [".Ulysses-Group.plist", ".DS_Store"]
+
     let year: Int
     let month: Int
     let day: Int
@@ -30,7 +32,17 @@ struct PostPath {
     }
     
     init?(path: Path) {
-        guard path.string.contains(".DS_Store") == false else { return nil }
+        func shouldIgnoreFile(fromPath path: Path) -> Bool {
+            for file in PostPath.filesToIgnore {
+                if path.string.contains(file) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        guard shouldIgnoreFile(fromPath: path) == false else { return nil }
         
         var components = path.lastComponentWithoutExtension.split(separator: "-")
         let _day = components[2]

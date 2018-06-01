@@ -12,21 +12,37 @@ import Vapor
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
         let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.posts.rawValue)")
-        let children = try dirPath.children()
+        let allPaths = try dirPath.children()
         
-        let adjustedPage = pageNumber - 1
-        let batchRange = (adjustedPage * config.batchSize)...(adjustedPage + 1 * (config.batchSize - 1))
-        let filepaths = children[batchRange]
-        
-        let postsPaths = filepaths.compactMap({ PostPath(path: $0) })
-        let posts = postsPaths.compactMap({ try? PostController.fetchPost(withPath: $0) })
-        
-        let newerLink = "page/\(pageNumber + 1)"
-        let olderLink = "page/\(pageNumber - 1)"
-        let numberOfPages = children.count / config.batchSize
+        let postsPaths = allPaths.compactMap({ PostPath(path: $0) })
+        let allPosts = postsPaths.compactMap({ try? PostController.fetchPost(withPath: $0) })
+
+        let batchRange = ((pageNumber - 1) * config.batchSize)...(pageNumber * (config.batchSize - 1))
+        let posts = Array(allPosts[batchRange])
+
+        let pageCount = allPaths.count / config.batchSize
+        let olderLink: String?
+        if pageNumber + 1 <= pageCount {
+            olderLink = "/page/\(pageNumber + 1)"
+        }
+        else {
+            olderLink = nil
+        }
+
+        let newerLink: String?
+        if pageNumber - 1 == 1 {
+            newerLink = "/"
+        }
+        else if pageNumber == 1 {
+            newerLink = nil
+        }
+        else {
+            newerLink = "/page/\(pageNumber - 1)"
+        }
+
         let pagination = Pagination(newerLink: newerLink,
                                     olderLink: olderLink,
-                                    pageNumber: "\(pageNumber) of \(numberOfPages)")
+                                    pageNumber: "\(pageNumber) of \(pageCount)")
         
         let postList = PostList(posts: posts, pagination: pagination)
         return postList
