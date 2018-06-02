@@ -7,11 +7,10 @@
 
 import Foundation
 import PathKit
-import Vapor
 
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
-        let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.posts.rawValue)")
+        let dirPath = PathHelper.root + Path("Public/\(Location.posts.rawValue)")
         let allPaths = try dirPath.children()
                         .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
         

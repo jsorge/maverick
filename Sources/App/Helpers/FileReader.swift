@@ -7,7 +7,6 @@
 
 import Foundation
 import PathKit
-import Vapor
 import Yams
 
 enum FileReaderError: Error {
@@ -16,7 +15,7 @@ enum FileReaderError: Error {
 
 struct FileReader {
     static func attemptToReadFile(named filename: String, in location: Location) throws -> BasePost {
-        let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(location.rawValue)")
+        let dirPath = PathHelper.root + Path("Public/\(location.rawValue)")
         let bundlepath = dirPath + Path("\(filename).textbundle")
         let filepath = bundlepath + Path("text.md")
         

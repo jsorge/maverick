@@ -7,7 +7,6 @@
 
 import Foundation
 import PathKit
-import Vapor
 import Yams
 
 struct SiteConfigController {
@@ -16,7 +15,7 @@ struct SiteConfigController {
     static func fetchSite() throws -> SiteConfig {
         guard currentConfig == nil else { return currentConfig! }
         
-        let configPath = Path(DirectoryConfig.detect().workDir) + Path("siteConfig.yml")
+        let configPath = PathHelper.root + Path("siteConfig.yml")
         do {
             let decoder = YAMLDecoder()
             let data = try configPath.read()

@@ -7,11 +7,10 @@
 
 import Foundation
 import PathKit
-import Vapor
 
 struct StaticPageController {
     static var registeredPages: [String] {
-        let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.pages.rawValue)")
+        let dirPath = PathHelper.root + Path("Public/\(Location.pages.rawValue)")
         do {
             let children = try dirPath.children()
             return children.map { $0.lastComponentWithoutExtension }
