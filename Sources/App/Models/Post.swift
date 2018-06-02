@@ -14,9 +14,10 @@ struct BasePost {
 }
 
 struct Post: Codable {
-    let date: Date?
+    var date: Date {
+        return frontMatter.date
+    }
     var formattedDate: String? {
-        guard let date = date else { return nil }
         let formatter = DateFormatter()
         return formatter.string(from: date)
     }
@@ -25,8 +26,7 @@ struct Post: Codable {
     let content: String
     let frontMatter: FrontMatter
     
-    init(date: Date?, url: String, title: String?, content: String, frontMatter: FrontMatter) {
-        self.date = date
+    init(url: String, title: String?, content: String, frontMatter: FrontMatter) {
         self.url = url
         self.title = title
         self.content = (try? markdownToHTML(content, options: [.safe])) ?? "unable to parse the markdown"
@@ -39,11 +39,14 @@ struct FrontMatter: Codable {
     let title: String?
     let layout: String?
     let guid: String?
+    let date: Date
+    let isStaticPage: Bool = false
     
     private enum CodingKeys: String, CodingKey {
         case isMicroblog = "microblog"
         case title = "title"
         case layout = "layout"
         case guid = "guid"
+        case date = "date"
     }
 }

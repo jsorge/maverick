@@ -13,6 +13,7 @@ struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
         let dirPath = Path(DirectoryConfig.detect().workDir) + Path("Public/\(Location.posts.rawValue)")
         let allPaths = try dirPath.children()
+                        .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
         
         let postsPaths = allPaths.compactMap({ PostPath(path: $0) })
         let allPosts = postsPaths.compactMap({ try? PostController.fetchPost(withPath: $0) })

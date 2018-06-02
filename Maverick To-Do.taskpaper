@@ -12,7 +12,7 @@ Vapor App:
 	Routing:
 		- add get routes for posts @done
 			- fix rendering output. Works on statics but not on posts @done
-		- archive pages
+		- archive pages @done
 		- static pages @done
 		1. Request comes in for /2018/04/08/hawaii-trip/
 		1. Determine the textbundle filename from the path
@@ -25,8 +25,8 @@ Vapor App:
 		- dates aren't working anywhere
 			- footer
 			- above a post title
-		- pagination not wired correctly
-		- ordering of post lists isn't correct
+		- pagination not wired correctly @done
+		- ordering of post lists isn't correct @done
 	Caching:
 		- Figure out how to cache the rendered theme (if that’s possible) @nonblocker
 		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.

@@ -22,8 +22,7 @@ struct StaticPageController {
 
     static func fetchStaticPage(named pageName: String) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
-        let post = Post(date: nil,
-                        url: "/\(pageName)",
+        let post = Post(url: "/\(pageName)",
                         title: base.frontMatter.title,
                         content: base.content,
                         frontMatter: base.frontMatter)

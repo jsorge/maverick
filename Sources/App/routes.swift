@@ -13,12 +13,14 @@ public func routes(_ router: Router) throws {
 
     let config = try SiteConfigController.fetchSite()
     
+    // Home
     router.get("") { req -> Future<View> in
         let leaf = try req.make(LeafRenderer.self)
         let page = try fetchPostList(for: 1, config: config)
         return leaf.render("index", page)
     }
     
+    // Static pages
     for page in StaticPageController.registeredPages {
         router.get(page) { req -> Future<View> in
             let leaf = try req.make(LeafRenderer.self)
@@ -28,6 +30,7 @@ public func routes(_ router: Router) throws {
         }
     }
     
+    // Blog posts
     router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<View> in
         let leaf = try req.make(LeafRenderer.self)
         
@@ -42,6 +45,7 @@ public func routes(_ router: Router) throws {
         return leaf.render("post", outputPage)
     }
     
+    // Archive
     router.get("page", Int.parameter) { req -> Future<View> in
         let leaf = try req.make(LeafRenderer.self)
         let page = try req.parameters.next(Int.self)
