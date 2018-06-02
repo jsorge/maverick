@@ -10,11 +10,6 @@ import PathKit
 import Vapor
 import Yams
 
-enum Location: String {
-    case pages = "_pages"
-    case posts = "_posts"
-}
-
 enum FileReaderError: Error {
     case unreadableFile
 }
@@ -43,7 +38,8 @@ struct FileReader {
         
         let decoder = YAMLDecoder()
         let frontMatter = try decoder.decode(FrontMatter.self, from: raw.frontMatter)
-        let post = BasePost(frontMatter: frontMatter, content: raw.content)
+        let content = try FileProcessor.processMarkdownText(raw.content, for: PathHelper.makeBundleAssetsPath(for: filename, in: location))
+        let post = BasePost(frontMatter: frontMatter, content: content)
         return post
     }
 }

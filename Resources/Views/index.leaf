@@ -9,7 +9,9 @@
 								<span class="post-meta"><time datetime="#(post.date)">#(post.formattedDate)</time></span>
 							}
 							#if(post.title) {
-								<h2 class="post-title">#(post.title)</h1>
+								<a href=#(post.url)>
+									<h2 class="post-title">#(post.title)</h1>
+								</a>
 							}
 							<section class="post-content">
 								#get(post.content)

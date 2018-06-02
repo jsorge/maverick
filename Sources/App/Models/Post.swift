@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftMarkdown
 
 struct BasePost {
     let frontMatter: FrontMatter
@@ -29,7 +28,7 @@ struct Post: Codable {
     init(url: String, title: String?, content: String, frontMatter: FrontMatter) {
         self.url = url
         self.title = title
-        self.content = (try? markdownToHTML(content, options: [.safe])) ?? "unable to parse the markdown"
+        self.content = content
         self.frontMatter = frontMatter
     }
 }
