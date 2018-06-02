@@ -5,7 +5,6 @@
 				#for(post in style.list.posts) {
 					<main class="content" role="main">
 						<article class="post">
-							<span class="post-meta"><time datetime="#(post.date)">#(post.formattedDate)</time></span>
 							#if(post.title) {
 								<a href=#(post.url)>
 									<h2 class="post-title">#(post.title)</h1>
@@ -13,7 +12,8 @@
 							}
 							<section class="post-content">
 								#get(post.content)
-							</section>		
+							</section>
+							<span class="post-meta"><time datetime="#(post.date)">#(post.formattedDate)</time></span>
 						</article>
 					</main>
 				}		

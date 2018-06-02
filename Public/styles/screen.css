@@ -444,7 +444,8 @@ margin on the iframe, cause it breaks stuff. */
     position: relative;
     width:80%;
     margin: 4rem auto;
-    padding-bottom: 4rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     border-bottom: #EBF2F6 1px solid;
     word-break: break-word;
     hyphens: auto;
@@ -471,7 +472,7 @@ margin on the iframe, cause it breaks stuff. */
 }
 
 .post-title {
-    margin:0px 0px 11px 0px;
+    margin:10px 0px 11px 0px;
     color: #ff7625;
 }
 
@@ -600,7 +601,7 @@ margin on the iframe, cause it breaks stuff. */
 }
 
 .post-content {
-	margin: 25px 0px 11px 0px
+	margin: 10px 0px 5px 0px
 }
 
 .post-content h1 h2 h3 h4 {

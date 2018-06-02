@@ -24,7 +24,7 @@ Vapor App:
 	Bugs:
 		- dates aren't working anywhere
 			- footer
-			- above a post title
+			- above a post title @done
 		- pagination not wired correctly @done
 		- ordering of post lists isn't correct @done
 	Caching:

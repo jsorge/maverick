@@ -39,6 +39,20 @@ struct Post: Codable {
 }
 
 struct FrontMatter: Codable {
+    private static let formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [
+            .withYear,
+            .withMonth,
+            .withDay,
+            .withDashSeparatorInDate,
+            .withTime,
+            .withSpaceBetweenDateAndTime,
+            .withColonSeparatorInTime
+        ]
+        return formatter
+    }()
+    
     let isMicroblog: Bool
     let title: String?
     let layout: String?
@@ -61,7 +75,8 @@ struct FrontMatter: Codable {
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
         self.layout = try container.decodeIfPresent(String.self, forKey: .layout)
         self.guid = try container.decodeIfPresent(String.self, forKey: .guid)
-        self.date = try container.decode(Date.self, forKey: .date)
+        let dateString = try container.decode(String.self, forKey: .date)
+        self.date = FrontMatter.formatter.date(from: dateString)!
         self.isStaticPage = try container.decodeIfPresent(Bool.self, forKey: .isStaticPage) ?? false
     }
 }
