@@ -22,8 +22,8 @@ Vapor App:
 		1. Convert the markdown to html
 		1. Pass the data to the theme
 	Bugs:
-		- dates aren't working anywhere
-			- footer
+		- dates aren't working anywhere @done
+			- footer @done
 			- above a post title @done
 		- pagination not wired correctly @done
 		- ordering of post lists isn't correct @done

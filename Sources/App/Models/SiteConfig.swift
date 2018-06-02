@@ -21,9 +21,9 @@ struct SiteConfig: Codable {
     /// The number of posts to include when listing posts
     let batchSize: Int
     /// The year to go in the footer.
-    var year: String {
+    let year: String = {
         let calendar = Calendar.current
         let date = Date()
         return "\(calendar.component(.year, from: date))"
-    }
+    }()
 }
