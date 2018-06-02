@@ -1,7 +1,7 @@
 #set("content") {
 <main class="content" role="main">
 		<article class="post">
-			#if(style.post.date) {
+			#if(style.post.isBlogPost) {
 				<span class="post-meta"><time datetime="#(style.post.date)">#(style.post.formattedDate)</time></span>
 			}
 			#if(style.post.title) {
