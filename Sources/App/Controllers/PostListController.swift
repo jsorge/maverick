@@ -10,17 +10,15 @@ import PathKit
 
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
-        let dirPath = PathHelper.root + Path("Public/\(Location.posts.rawValue)")
-        let allPaths = try dirPath.children()
-                        .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
+        let allPostPaths = try PathHelper.pathsForAllPosts()
         
-        let postsPaths = allPaths.compactMap({ PostPath(path: $0) })
+        let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
         let allPosts = postsPaths.compactMap({ try? PostController.fetchPost(withPath: $0) })
 
         let batchRange = ((pageNumber - 1) * config.batchSize)...(pageNumber * (config.batchSize - 1))
         let posts = Array(allPosts[batchRange])
 
-        let pageCount = allPaths.count / config.batchSize
+        let pageCount = allPostPaths.count / config.batchSize
         let olderLink: String?
         if pageNumber + 1 <= pageCount {
             olderLink = "/page/\(pageNumber + 1)"

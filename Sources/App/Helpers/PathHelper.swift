@@ -22,10 +22,19 @@ struct PathHelper {
     static var root: Path = {
         return Path(DirectoryConfig.detect().workDir)
     }()
+    
+    static var publicFolderPath: Path = {
+        return root + Path("Public")
     }()
     
     static var postFolderPath: String = {
-       let postsPath = Path(root) + Path(Location.posts.rawValue)
+       let postsPath = root + Path(Location.posts.rawValue)
         return postsPath.string
     }()
+    
+    static func pathsForAllPosts() throws -> [Path] {
+        let allPaths = try publicFolderPath.children()
+            .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
+        return allPaths
+    }
 }
