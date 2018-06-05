@@ -1,5 +1,9 @@
 # brew cask install docker
 
+# https://github.com/vapor/websocket/issues/9
+# Needs packages pkg-config & libressl via homebrew on mac
+# Needs libssl-dev & pkg-config on Linux
+
 .PHONY: up
 up:
 	docker-compose --verbose up --build
