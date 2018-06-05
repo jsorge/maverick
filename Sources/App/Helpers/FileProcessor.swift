@@ -11,13 +11,13 @@ import SwiftMarkdown
 struct FileProcessor {
     static func processMarkdownText(_ markdown: Markdown, for urlPath: String) throws -> String {
         var processedText = markdown
-        processedText = relinkImagesInText(markdown, urlPath: urlPath)
+        processedText = relinkImagesInText(processedText, urlPath: urlPath)
         processedText = try markdownToHTML(processedText, options: [.safe])
         return processedText
     }
     
     private static func relinkImagesInText(_ markdown: Markdown, urlPath: String) -> String {
-        let workingCopy = NSMutableString(string: markdown)
+        var output = markdown
         
         // The \ characters have to be escaped, so the pattern is actually:
         // !\[[^\]]*\]\((?<filename>.*?)(?=\"|\))(?<optionalpart>\".*\")?\)
@@ -41,11 +41,9 @@ struct FileProcessor {
             // we should have a link like `assets/image.jpg`
             // it needs to become `/_posts/2018-04-09-hawaii-trip.textbundle/assets/image.jpg`
             let newImagePath = "\(urlPath)/\(filepath)"
-            workingCopy.replaceOccurrences(of: filepath, with: newImagePath, options: [],
-                                           range: NSRange(location: 0, length: workingCopy.length))
+            output = output.replacingOccurrences(of: filepath, with: newImagePath)
         }
         
-        let output = String(workingCopy)
         return output
     }
 }
