@@ -9,14 +9,14 @@ import Foundation
 import PathKit
 
 protocol FeedGenerator {
-    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) -> String
+    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String
     static func outputFileName(forType type: TextOutputType) -> String
 }
 
 struct FeedOutput {
     static func makeAllTheFeeds() throws {
         let generators: [FeedGenerator.Type] = [
-            RSSFeedGenerator.self
+            RSSFeedGenerator.self, JSONFeedGenerator.self
         ]
         
         let site = try SiteConfigController.fetchSite()
@@ -33,7 +33,7 @@ struct FeedOutput {
                 }
                 
                 let filename = generator.outputFileName(forType: outputType)
-                let fileText = generator.makeFeed(from: posts, for: site, goingTo: outputType)
+                let fileText = try generator.makeFeed(from: posts, for: site, goingTo: outputType)
                 let outputPath = PathHelper.publicFolderPath + Path(filename)
                 try outputPath.write(fileText)
             }

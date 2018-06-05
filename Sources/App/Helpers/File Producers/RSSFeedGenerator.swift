@@ -8,13 +8,13 @@
 import Foundation
 
 struct RSSFeedGenerator: FeedGenerator {
-    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) -> String {
+    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String {
         var feed = """
         <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel>
         """
         
         feed += makeRSSHeaderText(from: site, goingTo: type)
-        posts.forEach({ feed += makeFeedItem(from: $0, for: site, type: type) })
+        posts.forEach({ feed += makeFeedItem(from: $0, for: site) })
         
         feed += "</channel></rss>"
         
@@ -32,14 +32,7 @@ struct RSSFeedGenerator: FeedGenerator {
 }
 
 private func makeRSSHeaderText(from site: SiteConfig, goingTo type: TextOutputType) -> String {
-    let feedLink: URL
-    switch type {
-    case .fullText:
-        feedLink = site.fullTextRSSURL
-    case .microblog:
-        feedLink = site.microblogRSSURL
-    }
-    
+    let feedLink = site.url.appendingPathComponent(RSSFeedGenerator.outputFileName(forType: type))
     let date = "Sun, 03 Jun 2018 21:19:23 GMT"
     
     return """
@@ -54,7 +47,7 @@ private func makeRSSHeaderText(from site: SiteConfig, goingTo type: TextOutputTy
     """
 }
 
-private func makeFeedItem(from post: Post, for site: SiteConfig, type: TextOutputType) -> String {
+private func makeFeedItem(from post: Post, for site: SiteConfig) -> String {
     let title: String
     if let postTitle = post.title {
         title = "<title><![CDATA[\(postTitle)]]></title>"
