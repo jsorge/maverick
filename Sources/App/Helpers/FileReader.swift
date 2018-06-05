@@ -37,8 +37,7 @@ struct FileReader {
         
         let decoder = YAMLDecoder()
         let frontMatter = try decoder.decode(FrontMatter.self, from: raw.frontMatter)
-        let content = try FileProcessor.processMarkdownText(raw.content, for: PathHelper.makeBundleAssetsPath(for: filename, in: location))
-        let post = BasePost(frontMatter: frontMatter, content: content)
+        let post = BasePost(frontMatter: frontMatter, content: raw.content)
         return post
     }
 }

@@ -7,9 +7,17 @@
 
 import Foundation
 
+typealias Markdown = String
+
 struct BasePost {
     let frontMatter: FrontMatter
-    let content: String
+    let content: Markdown
+}
+
+extension BasePost {
+    var isMicropostLength: Bool {
+        return content.count <= 280
+    }
 }
 
 struct Post: Codable {
@@ -26,8 +34,9 @@ struct Post: Codable {
     let content: String
     let isBlogPost: Bool
     let frontMatter: FrontMatter
+    let path: PostPath?
     
-    init(url: String, title: String?, content: String, frontMatter: FrontMatter) {
+    init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?) {
         self.date = frontMatter.date
         self.formattedDate = Post.dateFormatter.string(from: frontMatter.date)
         self.url = url
@@ -35,6 +44,7 @@ struct Post: Codable {
         self.content = content
         self.isBlogPost = (frontMatter.isStaticPage == false)
         self.frontMatter = frontMatter
+        self.path = path
     }
 }
 

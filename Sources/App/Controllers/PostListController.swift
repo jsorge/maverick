@@ -13,10 +13,11 @@ struct PostListController {
         let allPostPaths = try PathHelper.pathsForAllPosts()
         
         let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
-        let allPosts = postsPaths.compactMap({ try? PostController.fetchPost(withPath: $0) })
-
         let batchRange = ((pageNumber - 1) * config.batchSize)...(pageNumber * (config.batchSize - 1))
-        let posts = Array(allPosts[batchRange])
+        let neededPaths = Array(postsPaths[batchRange])
+        let postController = PostController(site: config)
+        let posts = neededPaths
+                    .compactMap({ try? postController.fetchPost(withPath: $0, outputtingFor: .fullText) })
 
         let pageCount = allPostPaths.count / config.batchSize
         let olderLink: String?

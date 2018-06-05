@@ -15,7 +15,7 @@ enum Location: String {
 }
 
 struct PathHelper {
-    static func makeBundleAssetsPath(for filename: String, in location: Location) -> String {
+    static func makeBundleAssetsPath(filename: String, location: Location) -> String {
         return "/\(location.rawValue)/\(filename).textbundle"
     }
     
@@ -27,13 +27,13 @@ struct PathHelper {
         return root + Path("Public")
     }()
     
-    static var postFolderPath: String = {
-       let postsPath = root + Path(Location.posts.rawValue)
-        return postsPath.string
+    static var postFolderPath: Path = {
+       let postsPath = publicFolderPath + Path(Location.posts.rawValue)
+        return postsPath
     }()
     
     static func pathsForAllPosts() throws -> [Path] {
-        let allPaths = try publicFolderPath.children()
+        let allPaths = try postFolderPath.children()
             .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
         return allPaths
     }

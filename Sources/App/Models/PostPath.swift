@@ -8,7 +8,7 @@
 import Foundation
 import PathKit
 
-struct PostPath: Comparable {
+struct PostPath: Codable, Comparable {
     let year: Int
     let month: Int
     let day: Int
@@ -64,5 +64,12 @@ struct PostPath: Comparable {
         }
         
         return false
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case year
+        case month
+        case day
+        case slug
     }
 }

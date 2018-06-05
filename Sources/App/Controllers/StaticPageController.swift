@@ -21,10 +21,13 @@ struct StaticPageController {
 
     static func fetchStaticPage(named pageName: String) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
+        let assetsPath = PathHelper.makeBundleAssetsPath(filename: pageName, location: .pages)
+        let formattedContent = try FileProcessor.processMarkdownText(base.content, for: assetsPath)
         let post = Post(url: "/\(pageName)",
                         title: base.frontMatter.title,
-                        content: base.content,
-                        frontMatter: base.frontMatter)
+                        content: formattedContent,
+                        frontMatter: base.frontMatter,
+                        path: nil)
         return post
     }
 }

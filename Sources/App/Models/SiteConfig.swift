@@ -27,3 +27,21 @@ struct SiteConfig: Codable {
         return "\(calendar.component(.year, from: date))"
     }()
 }
+
+extension SiteConfig {
+    var fullTextRSSURL: URL {
+        return url.appendingPathComponent("rss")
+    }
+    
+    var microblogRSSURL: URL {
+        return url.appendingPathComponent("microblog-rss")
+    }
+    
+    var fullTextJSONURL: URL {
+        return url.appendingPathComponent("json")
+    }
+    
+    var microblogJSONURL: URL {
+        return url.appendingPathComponent("microblog-json")
+    }
+}

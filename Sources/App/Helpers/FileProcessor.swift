@@ -9,14 +9,14 @@ import Foundation
 import SwiftMarkdown
 
 struct FileProcessor {
-    static func processMarkdownText(_ markdown: String, for urlPath: String) throws -> String {
+    static func processMarkdownText(_ markdown: Markdown, for urlPath: String) throws -> String {
         var processedText = markdown
         processedText = relinkImagesInText(markdown, urlPath: urlPath)
         processedText = try markdownToHTML(processedText, options: [.safe])
         return processedText
     }
     
-    private static func relinkImagesInText(_ markdown: String, urlPath: String) -> String {
+    private static func relinkImagesInText(_ markdown: Markdown, urlPath: String) -> String {
         let workingCopy = NSMutableString(string: markdown)
         
         // The \ characters have to be escaped, so the pattern is actually:

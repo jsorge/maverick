@@ -40,7 +40,8 @@ public func routes(_ router: Router) throws {
         let slug = try req.parameters.next(String.self)
         let path = PostPath(year: year, month: month, day: day, slug: slug)
         
-        let post = try PostController.fetchPost(withPath: path)
+        let postController = PostController(site: config)
+        let post = try postController.fetchPost(withPath: path, outputtingFor: .fullText)
         let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
         return leaf.render("post", outputPage)
     }
