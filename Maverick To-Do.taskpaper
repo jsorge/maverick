@@ -2,10 +2,10 @@ Vapor App:
 	- determine public folder structure @done
 	- make base theme @done
 	Feeds:
-		- full text rss
-		- full text json
-		- microblog rss
-		- microblog json
+		- full text rss @done
+		- full text json @done
+		- microblog rss @done
+		- microblog json @done
 	API:
 		- micropub
 		- XML RPC
