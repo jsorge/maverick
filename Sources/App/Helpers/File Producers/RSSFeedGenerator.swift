@@ -24,9 +24,9 @@ struct RSSFeedGenerator: FeedGenerator {
     static func outputFileName(forType type: TextOutputType) -> String {
         switch type {
         case .fullText:
-            return "rss"
+            return "feed.rss"
         case .microblog:
-            return "microblog-rss"
+            return "microblog-feed.rss"
         }
     }
 }
