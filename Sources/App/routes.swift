@@ -11,6 +11,7 @@ public func routes(_ router: Router) throws {
         return outputPage
     }
 
+    try MicropubHandler.routes(router)
     let config = try SiteConfigController.fetchSite()
     
     // Home
