@@ -8,6 +8,10 @@
 up:
 	docker-compose --verbose up --build
 	
+.PHONY: down
+down:
+	docker-compose down
+	
 .PHONY: docker-run
 docker-run:
 	swift run Run serve -b 0.0.0.0
