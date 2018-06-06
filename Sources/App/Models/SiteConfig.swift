@@ -26,4 +26,23 @@ struct SiteConfig: Codable {
         let date = Date()
         return "\(calendar.component(.year, from: date))"
     }()
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(metaDescription, forKey: .metaDescription)
+        try container.encode(title, forKey: .title)
+        try container.encode(description, forKey: .description)
+        try container.encode("\(url)", forKey: .url)
+        try container.encode(batchSize, forKey: .batchSize)
+        try container.encode(year, forKey: .year)
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case metaDescription
+        case title
+        case description
+        case url
+        case batchSize
+        case year
+    }
 }
