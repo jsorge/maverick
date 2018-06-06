@@ -22,14 +22,9 @@ public func routes(_ router: Router) throws {
     }
     
     // Static pages
-    for page in StaticPageController.registeredPages {
-        router.get(page) { req -> Future<View> in
-            let leaf = try req.make(LeafRenderer.self)
-            let post = try StaticPageController.fetchStaticPage(named: page)
-            let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
-            return leaf.render("post", outputPage)
-        }
-    }
+    StaticPageController.router = router
+    StaticPageController.site = config
+    try StaticPageController.updateStaticRoutes()
     
     // Blog posts
     router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<View> in

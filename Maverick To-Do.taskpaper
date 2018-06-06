@@ -27,6 +27,7 @@ Vapor App:
 			- above a post title @done
 		- pagination not wired correctly @done
 		- ordering of post lists isn't correct @done
+		- can a route be removed?
 	Caching:
 		- Figure out how to cache the rendered theme (if that’s possible) @nonblocker
 		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.

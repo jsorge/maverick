@@ -6,17 +6,29 @@
 //
 
 import Foundation
+import Leaf
 import PathKit
+import Vapor
 
 struct StaticPageController {
-    static var registeredPages: [String] {
-        let dirPath = PathHelper.root + Path("Public/\(Location.pages.rawValue)")
-        do {
-            let children = try dirPath.children()
-            return children.map { $0.lastComponentWithoutExtension }
-        } catch {
-            return []
+    static var router: Router?
+    static var site: SiteConfig?
+    private static var pageManager = StaticPageManager()
+
+    static func updateStaticRoutes() throws {
+        guard let router = router, let config = site else { return }
+
+        let newPages = try pageManager.updatePaths()
+        for page in newPages {
+            router.get(page) { req -> Future<View> in
+                 let leaf = try req.make(LeafRenderer.self)
+                let post = try StaticPageController.fetchStaticPage(named: page)
+                let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
+                return leaf.render("post", outputPage)
+            }
         }
+
+        //TODO: Figure out if a route can be removed
     }
 
     static func fetchStaticPage(named pageName: String) throws -> Post {
@@ -29,5 +41,32 @@ struct StaticPageController {
                         frontMatter: base.frontMatter,
                         path: nil)
         return post
+    }
+}
+
+private struct StaticPageManager {
+    typealias PageName = String
+    private var registeredPages = [PageName]()
+
+    mutating func updatePaths() throws -> [PageName] {
+        func isLegalPageName(_ name: PageName) -> Bool {
+            return name.starts(with: ".") == false
+        }
+
+        let dirPath = PathHelper.root + Path("Public/\(Location.pages.rawValue)")
+        var newPages = [PageName]()
+        do {
+            let children = try dirPath.children()
+            let pages = children.map({ $0.lastComponentWithoutExtension }).filter({ isLegalPageName($0) })
+            for page in pages {
+                guard registeredPages.contains(page) == false else { continue }
+                registeredPages.append(page)
+                newPages.append(page)
+            }
+        } catch {
+            return newPages
+        }
+
+        return newPages
     }
 }
