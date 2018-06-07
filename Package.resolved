@@ -164,6 +164,15 @@
         }
       },
       {
+        "package": "textbundleify",
+        "repositoryURL": "https://github.com/jsorge/textbundleify.git",
+        "state": {
+          "branch": "master",
+          "revision": "9002d65d9cdcbf7dcfb30c2fa5ae1802c23128fa",
+          "version": null
+        }
+      },
+      {
         "package": "URLEncodedForm",
         "repositoryURL": "https://github.com/vapor/url-encoded-form.git",
         "state": {

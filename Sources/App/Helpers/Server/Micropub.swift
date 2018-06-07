@@ -5,6 +5,7 @@
 //  Created by Jared Sorge on 6/5/18.
 //
 
+import Foundation
 import PathKit
 import Vapor
 
@@ -113,9 +114,7 @@ struct MicropubHandler {
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
                 guard authenticateRequest(req) else { throw MicropubError.authenticationFailed }
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
-
-                
-
+                try PostConverter.saveMicropubPost(postRequest)
                 return req.makeResponse()
             }
         }

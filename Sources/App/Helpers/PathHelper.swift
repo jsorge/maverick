@@ -37,4 +37,21 @@ struct PathHelper {
             .sorted(by: { $0.lastComponentWithoutExtension > $1.lastComponentWithoutExtension })
         return allPaths
     }
+
+    static func prepTheTemporaryPaths() throws {
+        try incomingPostPath.mkpath()
+        try incomingMediaPath.mkpath()
+    }
+
+    static var incomingFolderPath: Path = {
+        return root + Path("incoming")
+    }()
+
+    static var incomingPostPath: Path = {
+        return incomingFolderPath + Path("posts")
+    }()
+
+    static var incomingMediaPath: Path = {
+        return incomingFolderPath + Path("media")
+    }()
 }

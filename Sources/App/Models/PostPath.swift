@@ -18,7 +18,7 @@ struct PostPath: Codable, Comparable {
         return "/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))/\(slug)"
     }
     
-    var asFilepath: String {
+    var asFilename: String {
         return "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))-\(slug)"
     }
     

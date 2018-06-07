@@ -13,12 +13,12 @@ struct PostController {
     }
     
     func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType) throws -> Post {
-        let base = try FileReader.attemptToReadFile(named: path.asFilepath, in: .posts)
+        let base = try FileReader.attemptToReadFile(named: path.asFilename, in: .posts)
         
         let formattedContent: String
         switch (output, base.isMicropostLength) {
         case (.fullText, _), (.microblog, true):
-            let assetsPath = PathHelper.makeBundleAssetsPath(filename: path.asFilepath, location: .posts)
+            let assetsPath = PathHelper.makeBundleAssetsPath(filename: path.asFilename, location: .posts)
             formattedContent = try FileProcessor.processMarkdownText(base.content, for: assetsPath)
         case (.microblog, false):
             formattedContent = makeContentForLongPostInMicroblogFeed(title: base.frontMatter.title, path: path)

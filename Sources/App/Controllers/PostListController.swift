@@ -18,6 +18,7 @@ struct PostListController {
         let postController = PostController(site: config)
         let posts = neededPaths
                     .compactMap({ try? postController.fetchPost(withPath: $0, outputtingFor: .fullText) })
+                    .sorted(by: { $0.date > $1.date })
 
         let pageCount = allPostPaths.count / config.batchSize
         let olderLink: String?

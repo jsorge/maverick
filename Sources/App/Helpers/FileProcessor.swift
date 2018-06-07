@@ -15,20 +15,24 @@ struct FileProcessor {
         processedText = try markdownToHTML(processedText, options: [.safe])
         return processedText
     }
-    
-    private static func relinkImagesInText(_ markdown: Markdown, urlPath: String) -> String {
-        var output = markdown
-        
+
+    static func findImagesInText(_ markdown: Markdown) -> [NSTextCheckingResult] {
         // The \ characters have to be escaped, so the pattern is actually:
         // !\[[^\]]*\]\((?<filename>.*?)(?=\"|\))(?<optionalpart>\".*\")?\)
         let pattern = """
         !\\[[^\\]]*\\]\\((?<filename>.*?)(?=\\"|\\))(?<optionalpart>\\".*\\")?\\)
         """
-        
+
         let regex = try! NSRegularExpression.init(pattern: pattern, options: [])
         let matches = regex.matches(in: markdown, options: [], range: NSRange(location: 0,
                                                                               length: markdown.count))
-        
+
+        return matches
+    }
+    
+    private static func relinkImagesInText(_ markdown: Markdown, urlPath: String) -> String {
+        var output = markdown
+        let matches = findImagesInText(markdown)
         for match in matches {
             let range = match.range
             let fullImageMarkdown = NSString(string: markdown).substring(with: range)
