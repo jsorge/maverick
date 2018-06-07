@@ -56,7 +56,7 @@ private extension PostPath {
         var slug = [String]()
         for word in post.content.split(separator: " ") {
             guard slug.count < 6 else { break }
-            slug.append(String(word))
+            slug.append(String(word).lowercased())
         }
 
         let path = PostPath(year: year, month: month, day: day, slug: slug.joined(separator: "-"))
