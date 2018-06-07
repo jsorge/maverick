@@ -8,6 +8,8 @@ Vapor App:
 		- microblog json @done
 	API:
 		- micropub
+			- create posts @done
+			- resolve images
 		- XML RPC
 	Routing:
 		- add get routes for posts @done
