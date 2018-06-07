@@ -174,7 +174,7 @@ h6 {
 a {
 	color: #f97a3b;
     transition: color ease 0.3s;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 h1 a, h2 a, h3 a,
