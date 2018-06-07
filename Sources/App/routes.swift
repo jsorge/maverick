@@ -11,8 +11,8 @@ public func routes(_ router: Router) throws {
         return outputPage
     }
 
-    try MicropubHandler.routes(router)
     let config = try SiteConfigController.fetchSite()
+    try MicropubHandler.routes(router, config: config)
     
     // Home
     router.get("") { req -> Future<View> in

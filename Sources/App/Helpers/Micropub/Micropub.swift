@@ -8,8 +8,25 @@
 import PathKit
 import Vapor
 
+enum MicropubError: String, Error {
+    case unknownClient
+    case invalidAuthCode
+    case authenticationFailed
+    case UnsupportedHProperty
+}
+
+extension MicropubError: Debuggable {
+    var identifier: String {
+        return rawValue
+    }
+
+    var reason: String {
+        return rawValue
+    }
+}
+
 struct MicropubHandler {
-    static func routes(_ router: Router) throws {
+    static func routes(_ router: Router, config: SiteConfig) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Micropub.Auth.self)
             let servicePath = authedServicesPath + Path(auth.clientID)
@@ -40,9 +57,17 @@ struct MicropubHandler {
         router.post("token") { req -> Future<Response> in
             return try req.content.decode(Micropub.Auth.self).map({ auth -> Response in
                 let servicePath = authedServicesPath + Path(auth.clientID)
+
+                guard servicePath.exists else { throw MicropubError.unknownClient }
+
                 let data = try servicePath.read()
                 let decoder = PropertyListDecoder()
                 var service = try decoder.decode(Micropub.AuthedService.self, from: data)
+
+                guard let reqCode = auth.authCode, service.authCode == reqCode else {
+                    throw MicropubError.invalidAuthCode
+                }
+
                 service.authToken = Micropub.AuthedService.Token.new()
                 let encoder = PropertyListEncoder()
                 let updatedData = try encoder.encode(service)
@@ -51,28 +76,102 @@ struct MicropubHandler {
                 let output = Micropub.TokenOutput(accessToken: service.authToken!.value, scope: auth.scope,
                                                   me: auth.me)
                 var response = HTTPResponse()
-                if let header = req.http.headers.firstValue(name: HTTPHeaderName("Content-Type")), header.contains("json") {
+                if let header = req.http.headers.firstValue(name: HTTPHeaderName("Content-Type")),
+                    header.contains("json")
+                {
                     let jsonEncoder = JSONEncoder()
                     let jsonData = try jsonEncoder.encode(output)
                     response.body = HTTPBody(data: jsonData)
                 }
                 else {
                     let encoder = FormDataEncoder()
-                    let formData = try encoder.encode(output, boundary: "MaverickAuthTokenOutput".convertToData())
+                    let formData = try encoder.encode(output,
+                                                      boundary: "MaverickAuthTokenOutput".convertToData())
                     response.body = HTTPBody(data: formData)
                 }
 
                 return req.makeResponse(http: response)
             })
         }
-        
-        
+
+        router.get("micropub") { req -> Response in
+            guard authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+
+            var response = HTTPResponse()
+            let item = try req.query.get(String.self, at: ["q"])
+            if item == "content" {
+                let output = ["media-endpoint": "\(config.url.appendingPathComponent("micropub/media"))"]
+                let encoder = JSONEncoder()
+                let data = try encoder.encode(output)
+                    response.body = HTTPBody(data: data)
+            }
+
+            return req.makeResponse(http: response)
+        }
+
+        router.post("micropub") { req -> Future<Response> in
+            return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
+                guard authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+                guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
+
+                
+
+                return req.makeResponse()
+            }
+        }
+
+        router.post("micropub", "media") { req -> Response in
+            return req.makeResponse()
+        }
     }
     
     private static var authedServicesPath: Path {
         let path = PathHelper.root + Path("authorizations")
+        if path.exists == false {
+            try? path.mkpath()
+        }
         return path
     }
+
+    private static func authenticateRequest(_ req: Request) -> Bool {
+        func fetchAllAuthTokens() -> [String] {
+            guard let authedServices = try? authedServicesPath.children() else { return [] }
+            var tokens = [String]()
+            let decoder = PropertyListDecoder()
+            for service in authedServices {
+                do {
+                    let serviceData = try service.read()
+                    let service = try decoder.decode(Micropub.AuthedService.self, from: serviceData)
+                    guard let token = service.authToken else { continue }
+                    tokens.append(token.value)
+                }
+                catch {
+                    continue
+                }
+            }
+
+            return tokens
+        }
+
+        let tokens = fetchAllAuthTokens()
+        if let authHeader = req.http.headers.firstValue(name: .authorization) {
+            let split = authHeader.split(separator: " ")
+            guard let token = split.last else { return false }
+            return tokens.contains(String(token))
+        }
+        else {
+            // TODO: fetch `access_token` from the body
+        }
+
+        return false
+    }
+}
+
+struct MicropubBlogPostRequest: Codable {
+    let h: String
+    let name: String?
+    let content: String
+    let date = Date()
 }
 
 private struct Micropub {
@@ -81,12 +180,14 @@ private struct Micropub {
         let redirectURI: String
         let clientID: String
         let scope: String
+        let authCode: String?
         
         enum CodingKeys: String, CodingKey {
             case me
             case redirectURI = "redirect_uri"
             case clientID = "client_id"
             case scope
+            case authCode = "code"
         }
     }
     
@@ -112,8 +213,12 @@ private struct Micropub {
     }
 }
 
-extension UUID {
+private extension UUID {
     var base64Encoded: String {
         return String(data: uuidString.data(using: .utf8)!.base64EncodedData(), encoding: .utf8)!
     }
+}
+
+private extension HTTPHeaderName {
+    static var authorization = HTTPHeaderName("Authorization")
 }
