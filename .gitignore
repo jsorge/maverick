@@ -75,3 +75,4 @@ fastlane/test_output
 Public/_pages
 Public/_posts
 favicon.ico
+authorizations/*

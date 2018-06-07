@@ -10,6 +10,7 @@ import PathKit
 import Vapor
 
 enum MicropubError: String, Error {
+    case invalidClient
     case unknownClient
     case invalidAuthCode
     case authenticationFailed
@@ -30,7 +31,8 @@ struct MicropubHandler {
     static func routes(_ router: Router, config: SiteConfig) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Micropub.Auth.self)
-            let servicePath = authedServicesPath + Path(auth.clientID)
+            guard let clientID = URLComponents(string: auth.clientID)?.host else { throw MicropubError.invalidClient }
+            let servicePath = authedServicesPath + Path(clientID)
             let code: String
             if let serviceData = try? servicePath.read() {
                 let decoder = PropertyListDecoder()
@@ -39,7 +41,7 @@ struct MicropubHandler {
             }
             else {
                 code = UUID().base64Encoded
-                let service = Micropub.AuthedService(clientID: auth.clientID, authCode: code, authToken: nil)
+                let service = Micropub.AuthedService(clientID: clientID, authCode: code, authToken: nil)
                 let encoder = PropertyListEncoder()
                 let data = try encoder.encode(service)
                 try servicePath.write(data)
