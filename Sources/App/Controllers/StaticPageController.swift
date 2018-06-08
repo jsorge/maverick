@@ -10,27 +10,38 @@ import Leaf
 import PathKit
 import Vapor
 
-struct StaticPageController {
-    static var router: Router?
-    static var site: SiteConfig?
+struct StaticPageRouter: RouteCollection {
+    private static var site: SiteConfig?
+    private static var router: Router?
     private static var pageManager = StaticPageManager()
-
+    
+    init(siteConfig site: SiteConfig) {
+        StaticPageRouter.site = site
+    }
+    
+    func boot(router: Router) throws {
+        StaticPageRouter.router = router
+        try StaticPageRouter.updateStaticRoutes()
+    }
+    
     static func updateStaticRoutes() throws {
         guard let router = router, let config = site else { return }
-
+        
         let newPages = try pageManager.updatePaths()
         for page in newPages {
             router.get(page) { req -> Future<View> in
-                 let leaf = try req.make(LeafRenderer.self)
+                let leaf = try req.make(LeafRenderer.self)
                 let post = try StaticPageController.fetchStaticPage(named: page)
                 let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
                 return leaf.render("post", outputPage)
             }
         }
-
+        
         //TODO: Figure out if a route can be removed
     }
+}
 
+struct StaticPageController {
     static func fetchStaticPage(named pageName: String) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
         let assetsPath = PathHelper.makeBundleAssetsPath(filename: pageName, location: .pages)

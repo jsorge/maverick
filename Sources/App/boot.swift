@@ -12,7 +12,7 @@ private func runRepeatedTask(_ app: Application) {
     _ = app.eventLoop.scheduleTask(in: .seconds(10)) { () -> Void in
         do {
             try FeedOutput.makeAllTheFeeds()
-            try StaticPageController.updateStaticRoutes()
+            try StaticPageRouter.updateStaticRoutes()
         }
         catch {
             print("Unable to make all the feeds")

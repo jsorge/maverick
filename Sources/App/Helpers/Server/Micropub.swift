@@ -27,13 +27,18 @@ extension MicropubError: Debuggable {
     }
 }
 
-struct MicropubHandler {
-    static func routes(_ router: Router, config: SiteConfig) throws {
+struct MicropubHandler: RouteCollection {
+    private let config: SiteConfig
+    init(siteConfig config: SiteConfig) {
+        self.config = config
+    }
+    
+    func boot(router: Router) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Micropub.Auth.self)
             guard let clientID = URLComponents(string: auth.clientID)?.host
                 else { throw MicropubError.invalidClient }
-            let servicePath = authedServicesPath + Path(clientID)
+            let servicePath = self.authedServicesPath + Path(clientID)
             let code: String
             if let serviceData = try? servicePath.read() {
                 let decoder = PropertyListDecoder()
@@ -60,7 +65,7 @@ struct MicropubHandler {
         
         router.post("token") { req -> Future<Response> in
             return try req.content.decode(Micropub.Auth.self).map({ auth -> Response in
-                let servicePath = authedServicesPath + Path(auth.clientID)
+                let servicePath = self.authedServicesPath + Path(auth.clientID)
 
                 guard servicePath.exists else { throw MicropubError.unknownClient }
 
@@ -99,12 +104,12 @@ struct MicropubHandler {
         }
 
         router.get("micropub") { req -> Response in
-            guard authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
 
             var response = HTTPResponse()
             let item = try req.query.get(String.self, at: ["q"])
             if item == "content" {
-                let output = ["media-endpoint": "\(config.url.appendingPathComponent("micropub/media"))"]
+                let output = ["media-endpoint": "\(self.config.url.appendingPathComponent("micropub/media"))"]
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(output)
                     response.body = HTTPBody(data: data)
@@ -115,7 +120,7 @@ struct MicropubHandler {
 
         router.post("micropub") { req -> Future<Response> in
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
-                guard authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+                guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
                 try PostConverter.saveMicropubPost(postRequest)
                 return req.makeResponse()
@@ -127,7 +132,7 @@ struct MicropubHandler {
         }
     }
     
-    private static var authedServicesPath: Path {
+    private var authedServicesPath: Path {
         let path = PathHelper.root + Path("authorizations")
         if path.exists == false {
             try? path.mkpath()
@@ -135,7 +140,7 @@ struct MicropubHandler {
         return path
     }
 
-    private static func authenticateRequest(_ req: Request) -> Bool {
+    private func authenticateRequest(_ req: Request) -> Bool {
         func fetchAllAuthTokens() -> [String] {
             guard let authedServices = try? authedServicesPath.children() else { return [] }
             var tokens = [String]()

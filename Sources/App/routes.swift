@@ -12,7 +12,8 @@ public func routes(_ router: Router) throws {
     }
 
     let config = try SiteConfigController.fetchSite()
-    try MicropubHandler.routes(router, config: config)
+    try router.register(collection: MicropubHandler(siteConfig: config))
+    try router.register(collection: StaticPageRouter(siteConfig: config))
     
     // Home
     router.get("") { req -> Future<View> in
@@ -20,11 +21,6 @@ public func routes(_ router: Router) throws {
         let page = try fetchPostList(for: 1, config: config)
         return leaf.render("index", page)
     }
-    
-    // Static pages
-    StaticPageController.router = router
-    StaticPageController.site = config
-    try StaticPageController.updateStaticRoutes()
     
     // Blog posts
     router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<View> in
