@@ -31,7 +31,8 @@ struct MicropubHandler {
     static func routes(_ router: Router, config: SiteConfig) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Micropub.Auth.self)
-            guard let clientID = URLComponents(string: auth.clientID)?.host else { throw MicropubError.invalidClient }
+            guard let clientID = URLComponents(string: auth.clientID)?.host
+                else { throw MicropubError.invalidClient }
             let servicePath = authedServicesPath + Path(clientID)
             let code: String
             if let serviceData = try? servicePath.read() {

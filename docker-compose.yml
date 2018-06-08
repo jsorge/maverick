@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile-dev
     image: api:dev
     ports:
-      - 8080:8080
+      - 80:8080
     volumes:
       - .:/app
     working_dir: /app
