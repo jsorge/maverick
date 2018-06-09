@@ -6,7 +6,7 @@
 
 .PHONY: up
 up:
-	docker-compose --verbose up --build
+	docker-compose up --build
 	
 .PHONY: down
 down:
@@ -23,3 +23,7 @@ xcodegen:
 .PHONY: update
 update:
 	swift package update
+	
+.PHONY: serve
+serve:
+	docker-compose -f docker-compose-prod.yml up --build

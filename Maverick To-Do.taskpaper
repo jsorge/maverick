@@ -35,13 +35,13 @@ Vapor App:
 		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.
 		Cache should apply to all pages. When a new post is created the cache goes away completely for rebuilding.
 Server Config:
-	- nginx config
+	- nginx config @done
 	- letsencrypt with Acme
 		https://github.com/Neilpang/acme.sh
 	- fail2ban @nonblocker
 		- https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04
 	Docker:
-		- add nginx container @nonblocker
+		- add nginx container @nonblocker @done
 	- Matomo analytics
 		https://oleb.net/blog/2018/05/how-i-do-analytics/
 Publishing:

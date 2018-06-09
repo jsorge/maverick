@@ -41,7 +41,7 @@ struct StaticPageRouter: RouteCollection {
     }
 }
 
-struct StaticPageController {
+private struct StaticPageController {
     static func fetchStaticPage(named pageName: String) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
         let assetsPath = PathHelper.makeBundleAssetsPath(filename: pageName, location: .pages)

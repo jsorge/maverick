@@ -41,14 +41,14 @@ struct MicropubHandler: RouteCollection {
             let servicePath = self.authedServicesPath + Path(clientID)
             let code: String
             if let serviceData = try? servicePath.read() {
-                let decoder = PropertyListDecoder()
+                let decoder = JSONDecoder()
                 let service = try decoder.decode(Micropub.AuthedService.self, from: serviceData)
                 code = service.authCode
             }
             else {
                 code = UUID().base64Encoded
                 let service = Micropub.AuthedService(clientID: clientID, authCode: code, authToken: nil)
-                let encoder = PropertyListEncoder()
+                let encoder = JSONEncoder()
                 let data = try encoder.encode(service)
                 try servicePath.write(data)
             }
@@ -70,7 +70,7 @@ struct MicropubHandler: RouteCollection {
                 guard servicePath.exists else { throw MicropubError.unknownClient }
 
                 let data = try servicePath.read()
-                let decoder = PropertyListDecoder()
+                let decoder = JSONDecoder()
                 var service = try decoder.decode(Micropub.AuthedService.self, from: data)
 
                 guard let reqCode = auth.authCode, service.authCode == reqCode else {
@@ -78,7 +78,7 @@ struct MicropubHandler: RouteCollection {
                 }
 
                 service.authToken = Micropub.AuthedService.Token.new()
-                let encoder = PropertyListEncoder()
+                let encoder = JSONEncoder()
                 let updatedData = try encoder.encode(service)
                 try servicePath.write(updatedData)
                 
@@ -144,7 +144,7 @@ struct MicropubHandler: RouteCollection {
         func fetchAllAuthTokens() -> [String] {
             guard let authedServices = try? authedServicesPath.children() else { return [] }
             var tokens = [String]()
-            let decoder = PropertyListDecoder()
+            let decoder = JSONDecoder()
             for service in authedServices {
                 do {
                     let serviceData = try service.read()
