@@ -44,5 +44,7 @@ Server Config:
 		- add nginx container @nonblocker @done
 	- Matomo analytics
 		https://oleb.net/blog/2018/05/how-i-do-analytics/
+	- script the addition of the public directory as a submodule
+		If this ever gains adoption, a new user should be able to run `make setup` and one of the prompts should be the repo for their public folder. That repo would be a clone of some basic Maverick public folder repo. I'm getting ahead of myself here a bit.
 Publishing:
 	- write blog post
