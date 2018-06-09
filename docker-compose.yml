@@ -1,15 +1,23 @@
 version: "3.3"
 services:
-  api:
+  maverick:
     build:
       context: .
       dockerfile: Dockerfile-dev
-    image: api:dev
-    ports:
-      - 80:8080
+    image: maverick:dev
     volumes:
       - .:/app
     working_dir: /app
     stdin_open: true
     tty: true
     entrypoint: bash
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./Public:/home/maverick/Public
+      - ./nginx/dev-server.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - maverick
