@@ -1,0 +1,3 @@
+[submodule "Public"]
+	path = Public
+	url = git@github.com:jsorge/jsorge.net.git
