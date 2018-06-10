@@ -25,7 +25,7 @@ public func configure(
     services.register(middleware)
 }
 
-public final class MaverickLeafProvider: Provider {
+private final class MaverickLeafProvider: Provider {
     /// See Service.Provider.repositoryName
     public static let repositoryName = "leaf"
     
