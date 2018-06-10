@@ -57,7 +57,8 @@ struct MicropubHandler: RouteCollection {
                 return req.makeResponse(http: HTTPResponse())
             }
             let codeQuery = URLQueryItem(name: "code", value: code)
-            components.queryItems = [codeQuery]
+            let state = URLQueryItem(name: "state", value: auth.state)
+            components.queryItems = [codeQuery, state]
             
             guard let redirect = components.string else { return req.makeResponse(http: HTTPResponse()) }
             return req.redirect(to: redirect)
@@ -188,6 +189,7 @@ private struct Micropub {
         let clientID: String
         let scope: String
         let authCode: String?
+        let state: String?
         
         enum CodingKeys: String, CodingKey {
             case me
@@ -195,6 +197,7 @@ private struct Micropub {
             case clientID = "client_id"
             case scope
             case authCode = "code"
+            case state
         }
     }
     
