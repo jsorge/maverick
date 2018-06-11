@@ -150,10 +150,17 @@ public struct MicropubRouteHandler: RouteCollection {
             return tokens.contains(String(token))
         }
         else {
-            // TODO: fetch `access_token` from the body
+            guard let auth = try? req.content.syncDecode(PostBodyAuth.self) else { return false }
+            return tokens.contains(auth.accessToken)
         }
+    }
+}
 
-        return false
+private struct PostBodyAuth: Codable {
+    let accessToken: String
+
+    private enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
     }
 }
 
