@@ -4,6 +4,8 @@
 # Needs packages pkg-config & libressl via homebrew on mac
 # Needs libssl-dev & pkg-config on Linux
 
+PROJECT ?= Maverick.xcodeproj
+
 .PHONY: up
 up:
 	docker-compose up --build
@@ -16,9 +18,12 @@ down:
 docker-run:
 	swift run Run serve -b 0.0.0.0
 	
-.PHONY: xcodegen
-xcodegen:
-	swift package generate-xcodeproj
+project: $(PROJECT)
+
+$(PROJECT):
+	swift package generate-xcodeproj \
+		--xcconfig-overrides settings.xcconfig \
+		--output $(PROJECT)
 	
 .PHONY: update
 update:
