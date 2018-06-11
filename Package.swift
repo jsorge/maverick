@@ -13,7 +13,14 @@ let package = Package(
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
     ],
     targets: [
-        .target(name: "App", dependencies: ["Vapor", "Leaf", "SwiftMarkdown", "TextBundleify", "PathKit", "Yams"]),
+    	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
+        .target(name: "App", dependencies: ["Leaf",
+                                            "Micropub",
+                                            "SwiftMarkdown",
+                                            "TextBundleify",
+                                            "PathKit",
+                                            "Vapor",
+                                            "Yams"]),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: ["App"]),
     ]

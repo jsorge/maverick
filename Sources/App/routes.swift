@@ -1,4 +1,5 @@
 import Leaf
+import Micropub
 import Vapor
 
 /// Register your application's routes here.
@@ -12,7 +13,7 @@ public func routes(_ router: Router) throws {
     }
 
     let config = try SiteConfigController.fetchSite()
-    try router.register(collection: MicropubHandler(siteConfig: config))
+    try router.register(collection: MicropubRouteHandler(config: MicropubHelper.makeConfig(fromSite: config)))
     try router.register(collection: StaticPageRouter(siteConfig: config))
     
     // Home
