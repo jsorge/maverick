@@ -15,4 +15,3 @@ workflows:
   tests:
     jobs:
       - linux
-      # - macos
