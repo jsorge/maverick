@@ -9,6 +9,9 @@ import Foundation
 import PathKit
 import Vapor
 
+private let micropubPathComponent = "micropub"
+private let mediaPathComponent = "media"
+
 public struct MicropubRouteHandler: RouteCollection {
     private let config: MicropubConfig
     public init(config: MicropubConfig) {
@@ -18,21 +21,19 @@ public struct MicropubRouteHandler: RouteCollection {
     public func boot(router: Router) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Auth.self)
-            guard let clientID = URLComponents(string: auth.clientID)?.host
-                else { throw MicropubError.invalidClient }
-            let servicePath = self.authedServicesPath + Path(clientID)
+            let client = try self.makeClientFor(clientID: auth.clientID)
             let code: String
-            if let serviceData = try? servicePath.read() {
+            if let serviceData = try? client.servicePath.read() {
                 let decoder = JSONDecoder()
                 let service = try decoder.decode(Micropub.AuthedService.self, from: serviceData)
                 code = service.authCode
             }
             else {
                 code = UUID().base64Encoded
-                let service = Micropub.AuthedService(clientID: clientID, authCode: code, authToken: nil)
+                let service = Micropub.AuthedService(clientID: client.id, authCode: code, authToken: nil)
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(service)
-                try servicePath.write(data)
+                try client.servicePath.write(data)
             }
 
             guard var components = URLComponents(string: auth.redirectURI) else {
@@ -48,11 +49,11 @@ public struct MicropubRouteHandler: RouteCollection {
 
         router.post("token") { req -> Future<Response> in
             return try req.content.decode(Auth.self).map({ auth -> Response in
-                let servicePath = self.authedServicesPath + Path(auth.clientID)
+                let client = try self.makeClientFor(clientID: auth.clientID)
 
-                guard servicePath.exists else { throw MicropubError.unknownClient }
+                guard client.servicePath.exists else { throw MicropubError.unknownClient }
 
-                let data = try servicePath.read()
+                let data = try client.servicePath.read()
                 let decoder = JSONDecoder()
                 var service = try decoder.decode(Micropub.AuthedService.self, from: data)
 
@@ -63,7 +64,7 @@ public struct MicropubRouteHandler: RouteCollection {
                 service.authToken = Micropub.AuthedService.Token.new()
                 let encoder = JSONEncoder()
                 let updatedData = try encoder.encode(service)
-                try servicePath.write(updatedData)
+                try client.servicePath.write(updatedData)
 
                 let output = Micropub.TokenOutput(accessToken: service.authToken!.value, scope: auth.scope,
                                                   me: auth.me)
@@ -92,7 +93,7 @@ public struct MicropubRouteHandler: RouteCollection {
             var response = HTTPResponse()
             let item = try req.query.get(String.self, at: ["q"])
             if item == "content" {
-                let output = ["media-endpoint": "\(self.config.url.appendingPathComponent("micropub/media"))"]
+                let output = ["media-endpoint": "\(self.config.url.appendingPathComponent("\(micropubPathComponent)/\(mediaPathComponent)"))"]
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(output)
                 response.body = HTTPBody(data: data)
@@ -102,16 +103,21 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.post("micropub") { req -> Future<Response> in
+            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
-                guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
                 try self.config.newPostHandler(postRequest)
                 return req.makeResponse()
             }
         }
 
-        router.post("micropub", "media") { req -> Response in
-            return req.makeResponse()
+        router.post(micropubPathComponent, mediaPathComponent) { req -> Future<Response> in
+            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            return try req.content.decode(MediaUpload.self).map(to: Response.self, { upload in
+                let files = [upload.audio, upload.video, upload.photo].compactMap({ $0 })
+                try self.config.contentReceivedHandler(files)
+                return req.makeResponse()
+            })
         }
     }
 
@@ -121,6 +127,14 @@ public struct MicropubRouteHandler: RouteCollection {
             try? path.mkpath()
         }
         return path
+    }
+
+    private func makeClientFor(clientID: String?) throws -> (servicePath: Path, id: String) {
+        guard let clientID = clientID,
+            let clientHost = URLComponents(string: clientID)?.host
+            else { throw MicropubError.invalidClient }
+        let servicePath = self.authedServicesPath + Path(clientHost)
+        return (servicePath, clientHost)
     }
 
     private func authenticateRequest(_ req: Request) -> Bool {

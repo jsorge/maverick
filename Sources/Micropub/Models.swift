@@ -6,12 +6,24 @@
 //
 
 import Foundation
+import Vapor
 
 public struct MicropubBlogPostRequest: Codable {
     public let h: String
     public let name: String?
     public let content: String
     public let date = Date()
+    public let photo: File?
+}
+
+public struct Upload: Content {
+    public let files: [File]
+}
+
+struct MediaUpload: Content {
+    let photo: File?
+    let video: File?
+    let audio: File?
 }
 
 struct Auth: Codable {

@@ -18,10 +18,17 @@ struct PostConverter {
         try PathHelper.prepTheTemporaryPaths()
         try mdPath.write(blogPost)
 
+        var photoPath: Path? = nil
+        if let image = post.photo {
+            photoPath = PathHelper.incomingMediaPath + Path(image.filename)
+            try photoPath!.write(image.data)
+        }
+
         try TextBundleify.start(in: PathHelper.incomingPostPath, pathToAssets: PathHelper.incomingMediaPath)
         try (PathHelper.incomingPostPath + Path("\(postPath.asFilename).textbundle"))
             .move(PathHelper.postFolderPath + Path("\(postPath.asFilename).textbundle"))
         try FeedOutput.makeAllTheFeeds()
+        try? photoPath?.delete()
     }
 }
 
@@ -57,7 +64,17 @@ private extension PostPath {
         var slug = [String]()
         for word in post.content.split(separator: " ") {
             guard slug.count < 6 else { break }
-            slug.append(String(word).lowercased())
+            var slugComponent = String(word).lowercased()
+                .replacingOccurrences(of: "!", with: "")
+                .replacingOccurrences(of: "[", with: "")
+                .replacingOccurrences(of: "]", with: "")
+                .replacingOccurrences(of: "(", with: "")
+                .replacingOccurrences(of: ")", with: "")
+            if slugComponent.contains(".") {
+                let exploded = slugComponent.split(separator: ".")
+                slugComponent = String(exploded[0])
+            }
+            slug.append(slugComponent)
         }
 
         let path = PostPath(year: year, month: month, day: day, slug: slug.joined(separator: "-"))
