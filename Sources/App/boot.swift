@@ -15,7 +15,7 @@ private func runRepeatedTask(_ app: Application) {
             try StaticPageRouter.updateStaticRoutes()
         }
         catch {
-            print("Unable to make all the feeds")
+            print("Something on the timer went wrong: \(error)")
         }
         
         runRepeatedTask(app)
