@@ -13,7 +13,7 @@ public func configure(
     _ services: inout Services
 ) throws {
     // Register routes to the router
-    let router = EngineRouter.default()
+    let router = EngineRouter(caseInsensitive: true)
     try routes(router)
     services.register(router, as: Router.self)
 
