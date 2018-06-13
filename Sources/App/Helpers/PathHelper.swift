@@ -44,7 +44,7 @@ struct PathHelper {
     }
 
     static var incomingFolderPath: Path = {
-        return root + Path("incoming")
+        return publicFolderPath + Path("incoming")
     }()
 
     static var incomingPostPath: Path = {

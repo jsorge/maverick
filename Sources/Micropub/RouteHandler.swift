@@ -114,8 +114,14 @@ public struct MicropubRouteHandler: RouteCollection {
         router.post(micropubPathComponent, mediaPathComponent) { req -> Future<Response> in
             guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
             return try req.content.decode(MediaUpload.self).map(to: Response.self, { upload in
-                let files = [upload.audio, upload.video, upload.photo].compactMap({ $0 })
-                try self.config.contentReceivedHandler(files)
+                if let location = try self.config.contentReceivedHandler(upload.file) {
+                    var response = HTTPResponse(status: .created)
+                    let body = ["Location": location]
+                    let encoder = JSONEncoder()
+                    let bodyData = try encoder.encode(body)
+                    response.body = HTTPBody(data: bodyData)
+                    return req.makeResponse(http: response)
+                }
                 return req.makeResponse()
             })
         }

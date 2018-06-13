@@ -21,9 +21,7 @@ public struct Upload: Content {
 }
 
 struct MediaUpload: Content {
-    let photo: File?
-    let video: File?
-    let audio: File?
+    let file: File?
 }
 
 struct Auth: Codable {

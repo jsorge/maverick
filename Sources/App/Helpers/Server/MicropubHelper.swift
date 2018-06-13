@@ -16,14 +16,14 @@ struct MicropubHelper {
             try PostConverter.saveMicropubPost(request)
         }
 
-        let contentHandler: ContentReceivedHandler = { files throws in
+        let contentHandler: ContentReceivedHandler = { file throws -> String? in
+            guard let file = file else { return nil }
             let incomingPath = PathHelper.incomingMediaPath
-            for file in files {
-                let filepath = incomingPath + Path(file.filename)
-                try filepath.write(file.data)
-            }
+            let filepath = incomingPath + Path(file.filename)
+            try filepath.write(file.data)
 
             // TODO: Run some method that attempts to embed the files in their textbundles
+            return site.url.appendingPathComponent(file.filename).absoluteString
         }
 
         let config = MicropubConfig(url: site.url, postHandler: newPostHandler, contentHandler: contentHandler)

@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 
 public typealias NewPostHandler = (_ request: MicropubBlogPostRequest) throws -> ()
-public typealias ContentReceivedHandler = (_ content: [File]) throws -> ()
+public typealias ContentReceivedHandler = (_ content: File?) throws -> String?
 
 public struct MicropubConfig {
     let url: URL
