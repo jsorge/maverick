@@ -13,6 +13,7 @@ private func runRepeatedTask(_ app: Application) {
         do {
             try FeedOutput.makeAllTheFeeds()
             try StaticPageRouter.updateStaticRoutes()
+            try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
         }
         catch {
             print("Something on the timer went wrong: \(error)")

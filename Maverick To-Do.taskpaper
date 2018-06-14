@@ -9,7 +9,7 @@ Vapor App:
 	API:
 		- micropub
 			- create posts @done
-			- resolve images
+			- resolve images @done
 		- XML RPC
 	Routing:
 		- add get routes for posts @done

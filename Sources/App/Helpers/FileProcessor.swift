@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PathKit
 import SwiftMarkdown
 
 struct FileProcessor {
@@ -28,6 +29,44 @@ struct FileProcessor {
                                                                               length: markdown.count))
 
         return matches
+    }
+    
+    static func attemptToLinkImagesToPosts(imagePaths paths: [Path]) throws {
+        func textbundleNameThatContainsImage(named filename: String) -> String? {
+            let task = Process()
+            let pipe = Pipe()
+            
+            task.launchPath = "/usr/bin/grep"
+            task.arguments = ["-r", filename, "/Users/jsorge/Develop/maverick/Public/_posts"]
+            task.standardOutput = pipe
+            task.launch()
+            
+            let handle = pipe.fileHandleForReading
+            let data = handle.readDataToEndOfFile()
+            guard
+                let pathStr = String (data: data, encoding: String.Encoding.utf8),
+                pathStr.isEmpty == false
+                else { return nil }
+            
+            for component in pathStr.split(separator: "/") {
+                if component.contains("textbundle") {
+                    return String(component).replacingOccurrences(of: ".textbundle", with: "")
+                }
+            }
+            
+            return nil
+        }
+
+        
+        for path in paths {
+            guard let bundleName = textbundleNameThatContainsImage(named: path.lastComponent) else { continue }
+            let root = PathHelper.publicFolderPath
+            let bundlePath = root
+                + Path(String(PathHelper.makeBundleAssetsPath(filename: bundleName, location: .posts)
+                .dropFirst()))
+            let newFilepath = bundlePath + Path("assets") + Path(path.lastComponent)
+            try path.move(newFilepath)
+        }
     }
     
     private static func relinkImagesInText(_ markdown: Markdown, urlPath: String) -> String {
