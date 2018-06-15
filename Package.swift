@@ -11,8 +11,10 @@ let package = Package(
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor-community/markdown.git", .upToNextMajor(from: "0.4.0")),
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
+        .package(url: "https://github.com/jsorge/XMLParsing.git", .branch("master")),
     ],
     targets: [
+    	.target(name: "XMLRPC", dependencies: ["XMLParsing", "Vapor"]),
     	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
         .target(name: "App", dependencies: ["Leaf",
                                             "Micropub",
@@ -20,7 +22,9 @@ let package = Package(
                                             "TextBundleify",
                                             "PathKit",
                                             "Vapor",
-                                            "Yams"]),
+                                            "Yams",
+                                            "XMLRPC",
+                                            ]),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: ["App"]),
     ]

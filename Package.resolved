@@ -209,6 +209,15 @@
         }
       },
       {
+        "package": "XMLParsing",
+        "repositoryURL": "https://github.com/jsorge/XMLParsing.git",
+        "state": {
+          "branch": "master",
+          "revision": "fc91ba35d6385f23d5a96d727d55f034f46e643f",
+          "version": null
+        }
+      },
+      {
         "package": "Yams",
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
