@@ -14,14 +14,14 @@ let package = Package(
     ],
     targets: [
     	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
-        .target(name: "App", dependencies: ["Leaf",
+        .target(name: "MaverickLib", dependencies: ["Leaf",
                                             "Micropub",
                                             "SwiftMarkdown",
                                             "TextBundleify",
                                             "PathKit",
                                             "Vapor",
                                             "Yams"]),
-        .target(name: "Run", dependencies: ["App"]),
-        .testTarget(name: "AppTests", dependencies: ["App"]),
+        .target(name: "Maverick", dependencies: ["MaverickLib"]),
+        .testTarget(name: "AppTests", dependencies: ["MaverickLib"]),
     ]
 )
