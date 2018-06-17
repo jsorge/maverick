@@ -14,7 +14,7 @@ RUN apt-get -qq update && apt-get install -y \
   tzdata \
   && rm -r /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=builder /build/bin/Run .
+COPY --from=builder /build/bin/Maverick .
 COPY --from=builder /build/lib/* /usr/lib/
 EXPOSE 8080
-ENTRYPOINT ./Run serve -e prod -b 0.0.0.0
+ENTRYPOINT ./Maverick serve -e prod -b 0.0.0.0

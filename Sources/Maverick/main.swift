@@ -1,4 +1,4 @@
-import App
+import MaverickLib
 import Service
 import Vapor
 import Foundation
@@ -9,7 +9,7 @@ do {
     var env = try Environment.detect()
     var services = Services.default()
 
-    try App.configure(&config, &env, &services)
+    try MaverickLib.configure(&config, &env, &services)
 
     let app = try Application(
         config: config,
@@ -17,7 +17,7 @@ do {
         services: services
     )
 
-    try App.boot(app)
+    try MaverickLib.boot(app)
 
     try app.run()
 } catch {
