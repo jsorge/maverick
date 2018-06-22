@@ -50,3 +50,7 @@ Development Strategy:
 		I think the Maverick repo should be only for the application; no blog content should ever live here. The implications of that are that there needs to be some `make dev` step that can take the contents of a repo and `curl` it into a "dev" folder or something like that. The Vapor code around Public paths would have to be #if DEBUG #else #endif` fenced to get this working.
 		
 		Then there would be a site repo which pulls from the built image that is made from the main app repo. It's so crazy it just might work :)
+	- script downloading a site and shoving into _dev folder
+		- remove existing _dev folder before downloading
+	- Upadate maverick code to look for DEBUG conditions where using the filesystem
+	- Update nginx configs

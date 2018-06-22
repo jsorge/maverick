@@ -5,6 +5,7 @@
 # Needs libssl-dev & pkg-config on Linux
 
 PROJECT ?= Maverick.xcodeproj
+CONTAINER ?= jsorge/maverick
 
 .PHONY: up
 up:
@@ -32,3 +33,15 @@ update:
 .PHONY: serve
 serve:
 	docker-compose -f docker-compose-prod.yml up --build
+	
+.PHONY: docker-build
+docker-build:
+	docker build -t $(CONTAINER) .
+	
+.PHONY: docker-push
+docker-push:
+	docker push $(CONTAINER)
+	
+.PHONY: docker-logs
+docker-logs:
+	docker-compose logs web
