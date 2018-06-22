@@ -17,7 +17,7 @@ down:
 	
 .PHONY: docker-run
 docker-run:
-	swift run Maverick serve -b 0.0.0.0
+	swift run -Xswiftc "DEBUG" Maverick serve -b 0.0.0.0
 	
 project: $(PROJECT)
 
