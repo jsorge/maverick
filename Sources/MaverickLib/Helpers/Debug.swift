@@ -9,9 +9,5 @@ import Foundation
 
 // https://blog.wadetregaskis.com/if-debug-in-swift/
 func isDebug() -> Bool {
-    if _isDebugAssertConfiguration() {
-        return true
-    }
-    
-    return false
+    return _isDebugAssertConfiguration()
 }

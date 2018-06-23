@@ -7,6 +7,10 @@
 PROJECT ?= Maverick.xcodeproj
 CONTAINER ?= jsorge/maverick
 
+.PHONY: dev
+dev:
+	./tools/update_dev.sh
+
 .PHONY: up
 up:
 	docker-compose up --build

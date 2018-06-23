@@ -15,7 +15,7 @@ struct SiteConfigController {
     static func fetchSite() throws -> SiteConfig {
         guard currentConfig == nil else { return currentConfig! }
         
-        let configPath = PathHelper.root + Path("siteconfig.yml")
+        let configPath = PathHelper.root + Path("SiteConfig.yml")
         do {
             let decoder = YAMLDecoder()
             let data = try configPath.read()
