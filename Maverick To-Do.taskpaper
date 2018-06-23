@@ -36,7 +36,7 @@ Vapor App:
 		Cache should apply to all pages. When a new post is created the cache goes away completely for rebuilding.
 Server Config:
 	- nginx config @done
-	- letsencrypt with Acme
+	- letsencrypt with Acme @done
 		https://github.com/Neilpang/acme.sh
 	- fail2ban @nonblocker
 		- https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04
@@ -44,7 +44,13 @@ Server Config:
 		- add nginx container @nonblocker @done
 	- Matomo analytics
 		https://oleb.net/blog/2018/05/how-i-do-analytics/
-	- script the addition of the public directory as a submodule
-		If this ever gains adoption, a new user should be able to run `make setup` and one of the prompts should be the repo for their public folder. That repo would be a clone of some basic Maverick public folder repo. I'm getting ahead of myself here a bit.
 Publishing:
 	- write blog post
+Development Strategy:
+		I think the Maverick repo should be only for the application; no blog content should ever live here. The implications of that are that there needs to be some `make dev` step that can take the contents of a repo and `curl` it into a "dev" folder or something like that. The Vapor code around Public paths would have to be #if DEBUG #else #endif` fenced to get this working.
+		
+		Then there would be a site repo which pulls from the built image that is made from the main app repo. It's so crazy it just might work :)
+	- script downloading a site and shoving into _dev folder
+		- remove existing _dev folder before downloading
+	- Upadate maverick code to look for DEBUG conditions where using the filesystem
+	- Update nginx configs
