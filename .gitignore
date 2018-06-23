@@ -82,3 +82,4 @@ authorizations/*
 /Public/microblog-feed.rss
 /incoming
 /_dev
+/nginx

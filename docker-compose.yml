@@ -10,11 +10,10 @@ services:
     working_dir: /app
     stdin_open: true
     tty: true
-    entrypoint: make docker-run
   nginx:
     build:
-      context: .
-      dockerfile: ./_dev/nginx/Dockerfile-nginx
+      context: ./_dev
+      dockerfile: ./nginx/Dockerfile-nginx
       args:
         build_domain: jsorge.local
     environment:
@@ -23,9 +22,9 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./_dev/Public:/home/maverick/Public
-      - ./_dev/nginx/ssl:/var/www/ssl
-      - ./_dev/nginx/logs:/var/log/nginx
+      - ./Public:/home/maverick/Public
+      - ./nginx/ssl:/var/www/ssl
+      - ./nginx/logs:/var/log/nginx
     depends_on:
-      - web
+      - maverick
   

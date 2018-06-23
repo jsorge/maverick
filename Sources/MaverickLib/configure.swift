@@ -43,9 +43,17 @@ private final class MaverickLeafProvider: Provider {
         
         services.register { container -> LeafConfig in
             let dir = try container.make(DirectoryConfig.self)
+            let viewsDir: String
+            if isDebug() {
+                viewsDir = dir.workDir + "_dev/Resources/Views"
+            }
+            else {
+                viewsDir = dir.workDir + "Resources/Views"
+            }
+            
             return try LeafConfig(
                 tags: container.make(),
-                viewsDir: dir.workDir + "Public/Views",
+                viewsDir: viewsDir,
                 shouldCache: container.environment != .development
             )
         }

@@ -20,7 +20,12 @@ struct PathHelper {
     }
     
     static var root: Path = {
-        return Path(DirectoryConfig.detect().workDir)
+        if isDebug() {
+            return Path(DirectoryConfig.detect().workDir) + Path("_dev")
+        }
+        else {
+            return Path(DirectoryConfig.detect().workDir)
+        }
     }()
     
     static var publicFolderPath: Path = {
