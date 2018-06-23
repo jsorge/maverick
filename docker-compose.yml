@@ -10,6 +10,7 @@ services:
     working_dir: /app
     stdin_open: true
     tty: true
+    entrypoint: make docker-run
   nginx:
     build:
       context: ./_dev
