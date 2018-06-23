@@ -72,14 +72,6 @@ fastlane/test_output
 *.xcodeproj
 
 # User data
-Public/_pages
-Public/_posts
-favicon.ico
 authorizations/*
-/Public/feed.json
-/Public/feed.rss
-/Public/microblog-feed.json
-/Public/microblog-feed.rss
-/incoming
 /_dev
 /nginx
