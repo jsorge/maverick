@@ -1,3 +1,4 @@
+import Logging
 import Routing
 import Vapor
 
@@ -17,7 +18,8 @@ private func runRepeatedTask(_ app: Application) {
             try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
         }
         catch {
-            print("Something on the timer went wrong: \(error)")
+            let logger = try app.make(Logger.self)
+            logger.error("Something on the timer went wrong: \(error)")
         }
         
         runRepeatedTask(app)
