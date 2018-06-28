@@ -6,7 +6,42 @@
 //
 
 import Foundation
+import Leaf
 import PathKit
+import Vapor
+
+struct PostListRouteCollection: RouteCollection {
+    private let config: SiteConfig
+    
+    init(config: SiteConfig) {
+        self.config = config
+    }
+    
+    func boot(router: Router) throws {
+        func fetchPostList(for page: Int, config: SiteConfig) throws -> Page {
+            let postList = try PostListController.fetchPostList(forPageNumber: page, config: config)
+            let outputPage = Page(style: .list(list: postList), site: config, title: config.title)
+            return outputPage
+        }
+        
+        // Home
+        router.get("") { req -> Future<View> in
+            let config = try SiteConfigController.fetchSite()
+            let leaf = try req.make(LeafRenderer.self)
+            let page = try fetchPostList(for: 1, config: config)
+            return leaf.render("index", page)
+        }
+        
+        // Archive
+        router.get("page", Int.parameter) { req -> Future<View> in
+            let config = try SiteConfigController.fetchSite()
+            let leaf = try req.make(LeafRenderer.self)
+            let page = try req.parameters.next(Int.self)
+            let outputPage = try fetchPostList(for: page, config: config)
+            return leaf.render("index", outputPage)
+        }
+    }
+}
 
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
