@@ -6,6 +6,33 @@
 //
 
 import Foundation
+import Leaf
+import Vapor
+
+struct SinglePostRouteCollection: RouteCollection {
+    let config: SiteConfig
+    
+    init(config: SiteConfig) {
+        self.config = config
+    }
+    
+    func boot(router: Router) throws {
+        router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<View> in
+            let leaf = try req.make(LeafRenderer.self)
+            
+            let year = try req.parameters.next(Int.self)
+            let month = try req.parameters.next(Int.self)
+            let day = try req.parameters.next(Int.self)
+            let slug = try req.parameters.next(String.self)
+            let path = PostPath(year: year, month: month, day: day, slug: slug)
+            
+            let postController = PostController(site: self.config)
+            let post = try postController.fetchPost(withPath: path, outputtingFor: .fullText)
+            let outputPage = Page(style: .single(post: post), site: self.config, title: post.title ?? self.config.title)
+            return leaf.render("post", outputPage)
+        }
+    }
+}
 
 struct PostController {
     init(site: SiteConfig) {
