@@ -12,8 +12,14 @@ import Yams
 struct SiteConfigController {
     static func fetchSite() throws -> SiteConfig {
         let configPath = PathHelper.root + Path("SiteConfig.yml")
-        guard configPath.exists else { throw FileReaderError.fileDoesNotExist }
-        let data = try configPath.read()
+        let data: Data
+        do {
+            data = try configPath.read()
+        }
+        catch {
+            data = SiteConfig.defaultData
+        }
+        
         
         guard let congfigStr = String(data: data, encoding: .utf8)
             else { throw FileReaderError.unreadableFile }
@@ -21,5 +27,17 @@ struct SiteConfigController {
         let decoder = YAMLDecoder()
         let config = try decoder.decode(SiteConfig.self, from: congfigStr)
         return config
+    }
+}
+
+private extension SiteConfig {
+    static var defaultData: Data {
+        return """
+        metaDescription: This site has not been properly configured
+        title: My Maverick Site
+        description: This site has not been properly configured
+        url: http://example.local
+        batchSize: 20
+        """.data(using: .utf8)!
     }
 }
