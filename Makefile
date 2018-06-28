@@ -4,8 +4,11 @@
 # Needs packages pkg-config & libressl via homebrew on mac
 # Needs libssl-dev & pkg-config on Linux
 
-PROJECT ?= Maverick.xcodeproj
+PROJECT   ?= Maverick.xcodeproj
 CONTAINER ?= jsorge/maverick
+TAG       := $$(git log -1 --pretty=%h)
+IMG       := ${CONTAINER}:${TAG}
+LATEST    := ${CONTAINER}:latest
 
 .PHONY: dev
 dev:
@@ -36,8 +39,9 @@ update:
 	
 .PHONY: docker-build
 docker-build:
-	docker build -t $(CONTAINER) .
+	@docker build -t ${IMG} .
+	@docker tag ${IMG} ${LATEST}
 	
 .PHONY: docker-push
 docker-push:
-	docker push $(CONTAINER)
+	docker push ${CONTAINER}
