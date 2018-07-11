@@ -63,9 +63,16 @@ private func makeFeedItem(from post: Post, for site: SiteConfig) -> String? {
     <item>
     \(title)
     <link>\(site.url)\(post.path!.asURIPath)</link>
-    <guid ispermalink="false">5b03a67ecebcec05fe03fe5e</guid>
+    <guid ispermalink="false">\(post.path!.asURIPath.asBase64)</guid>
     <pubdate>\(post.formattedDate)</pubdate>
     <content:encoded><![CDATA[\(content)]]></content:encoded>
     </item>
     """
+}
+
+private extension String {
+    var asBase64: String {
+        let data = self.data(using: .utf8)!
+        return data.base64EncodedString()
+    }
 }
