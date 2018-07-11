@@ -1,6 +1,9 @@
 Vapor App:
 	- determine public folder structure @done
 	- make base theme @done
+	- Support drafts
+		- Add a new path `https://blog.com/draft/slug-goes-here
+		- When the draft becomes a post, the draft URL should redirect properly
 	Feeds:
 		- full text rss @done
 		- full text json @done
@@ -42,6 +45,9 @@ Server Config:
 		- https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-ubuntu-14-04
 	Docker:
 		- add nginx container @nonblocker @done
+		- Automate server install of docker compose
+			https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04
+	- automate installation of make on Ubuntu using apt-get
 	- Matomo analytics
 		https://oleb.net/blog/2018/05/how-i-do-analytics/
 Publishing:
