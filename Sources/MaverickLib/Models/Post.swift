@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Logging
 
 typealias Markdown = String
 
@@ -85,8 +86,15 @@ struct FrontMatter: Codable {
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
         self.layout = try container.decodeIfPresent(String.self, forKey: .layout)
         self.guid = try container.decodeIfPresent(String.self, forKey: .guid)
-        let dateString = try container.decode(String.self, forKey: .date)
-        self.date = FrontMatter.formatter.date(from: dateString)!
         self.isStaticPage = try container.decodeIfPresent(Bool.self, forKey: .isStaticPage) ?? false
+        
+        // Dates are finicky.
+        // We expect them to come in in `2018-07-11 06:29:36` format
+        let dateString = try container.decode(String.self, forKey: .date)
+        let date = FrontMatter.formatter.date(from: dateString)
+        if date == nil {
+            MaverickLogger.shared?.error("Error parsing date: \(dateString), for: \(self.title ?? "untitled")")
+        }
+        self.date = date ?? Date()
     }
 }

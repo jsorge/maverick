@@ -7,6 +7,7 @@ import Vapor
 /// [Learn More →](https://docs.vapor.codes/3.0/getting-started/structure/#bootswift)
 public func boot(_ app: Application) throws {    
     try PathHelper.prepTheTemporaryPaths()
+    MaverickLogger.shared = try? app.make(Logger.self)
     runRepeatedTask(app)
 }
 
@@ -18,8 +19,7 @@ private func runRepeatedTask(_ app: Application) {
             try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
         }
         catch {
-            let logger = try app.make(Logger.self)
-            logger.error("Something on the timer went wrong: \(error)")
+            MaverickLogger.shared?.error("Something on the timer went wrong: \(error)")
         }
         
         runRepeatedTask(app)
