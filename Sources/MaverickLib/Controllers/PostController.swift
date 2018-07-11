@@ -67,7 +67,7 @@ struct PostController {
         var output = "New post from \(_site.title): "
         
         if let title = title {
-            output.append("[\(title)](\(postHref)")
+            output.append("[\(title)](\(postHref))")
         }
         else {
             output.append(postHref)
