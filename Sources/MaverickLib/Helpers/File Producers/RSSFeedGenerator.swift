@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftMarkdown
 
 struct RSSFeedGenerator: FeedGenerator {
     static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String {
@@ -14,9 +15,9 @@ struct RSSFeedGenerator: FeedGenerator {
         """
         
         feed += makeRSSHeaderText(from: site, goingTo: type)
-        posts.forEach({ feed += makeFeedItem(from: $0, for: site) })
+        posts.forEach({ feed += makeFeedItem(from: $0, for: site) ?? "" })
         
-        feed += "</channel></rss>"
+        feed += "\n</channel>\n</rss>"
         
         return feed
     }
@@ -47,7 +48,9 @@ private func makeRSSHeaderText(from site: SiteConfig, goingTo type: TextOutputTy
     """
 }
 
-private func makeFeedItem(from post: Post, for site: SiteConfig) -> String {
+private func makeFeedItem(from post: Post, for site: SiteConfig) -> String? {
+    guard let content = try? markdownToHTML(post.content, options: [.safe]) else { return nil }
+    
     let title: String
     if let postTitle = post.title {
         title = "<title><![CDATA[\(postTitle)]]></title>"
@@ -62,7 +65,7 @@ private func makeFeedItem(from post: Post, for site: SiteConfig) -> String {
     <link>\(site.url)\(post.path!.asURIPath)</link>
     <guid ispermalink="false">5b03a67ecebcec05fe03fe5e</guid>
     <pubdate>\(post.formattedDate)</pubdate>
-    <content:encoded><![CDATA[\(post.content)]]></content:encoded>
+    <content:encoded><![CDATA[\(content)]]></content:encoded>
     </item>
     """
 }
