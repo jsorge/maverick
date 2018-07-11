@@ -11,9 +11,8 @@ import SwiftMarkdown
 struct JSONFeedGenerator: FeedGenerator {
     static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String {
         let items: [JSONFeed.Item] = posts.compactMap({
-            guard let content = try? markdownToHTML($0.content, options: [.safe]) else { return nil }
             let url = site.url.appendingPathComponent($0.path!.asURIPath)
-            return JSONFeed.Item(id: url.absoluteString, url: url, title: $0.title, content: content)
+            return JSONFeed.Item(id: url.absoluteString, url: url, title: $0.title, content: $0.content)
         })
         
         let feed = JSONFeed(title: site.title,

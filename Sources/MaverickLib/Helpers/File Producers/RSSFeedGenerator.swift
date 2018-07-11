@@ -49,8 +49,6 @@ private func makeRSSHeaderText(from site: SiteConfig, goingTo type: TextOutputTy
 }
 
 private func makeFeedItem(from post: Post, for site: SiteConfig) -> String? {
-    guard let content = try? markdownToHTML(post.content, options: [.safe]) else { return nil }
-    
     let title: String
     if let postTitle = post.title {
         title = "<title><![CDATA[\(postTitle)]]></title>"
@@ -65,7 +63,7 @@ private func makeFeedItem(from post: Post, for site: SiteConfig) -> String? {
     <link>\(site.url)\(post.path!.asURIPath)</link>
     <guid ispermalink="false">\(post.path!.asURIPath.asBase64)</guid>
     <pubdate>\(post.formattedDate)</pubdate>
-    <content:encoded><![CDATA[\(content)]]></content:encoded>
+    <content:encoded><![CDATA[\(post.content)]]></content:encoded>
     </item>
     """
 }

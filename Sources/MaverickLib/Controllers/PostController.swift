@@ -7,6 +7,7 @@
 
 import Foundation
 import Leaf
+import SwiftMarkdown
 import Vapor
 
 struct SinglePostRouteCollection: RouteCollection {
@@ -76,6 +77,7 @@ struct PostController {
             output.append(postHref)
         }
         
+        output = try! markdownToHTML(output)
         return output
     }
 }
