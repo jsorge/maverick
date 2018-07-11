@@ -43,16 +43,19 @@ struct PostController {
         let base = try FileReader.attemptToReadFile(named: path.asFilename, in: .posts)
         
         let formattedContent: String
+        let title: String?
         switch (output, base.isMicropostLength) {
         case (.fullText, _), (.microblog, true):
             let assetsPath = PathHelper.makeBundleAssetsPath(filename: path.asFilename, location: .posts)
             formattedContent = try FileProcessor.processMarkdownText(base.content, for: assetsPath)
+            title = base.frontMatter.title
         case (.microblog, false):
             formattedContent = makeContentForLongPostInMicroblogFeed(title: base.frontMatter.title, path: path)
+            title = nil
         }
         
         let post = Post(url: path.asURIPath,
-                        title: base.frontMatter.title,
+                        title: title,
                         content: formattedContent,
                         frontMatter: base.frontMatter,
                         path: path)
