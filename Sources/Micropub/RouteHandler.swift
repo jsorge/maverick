@@ -127,25 +127,17 @@ public struct MicropubRouteHandler: RouteCollection {
         }
     }
 
-    private var authedServicesPath: Path {
-        let path = PathHelper.root + Path("authorizations")
-        if path.exists == false {
-            try? path.mkpath()
-        }
-        return path
-    }
-
     private func makeClientFor(clientID: String?) throws -> (servicePath: Path, id: String) {
         guard let clientID = clientID,
             let clientHost = URLComponents(string: clientID)?.host
             else { throw MicropubError.invalidClient }
-        let servicePath = self.authedServicesPath + Path(clientHost)
+        let servicePath = PathHelper.authedServicesPath + Path(clientHost)
         return (servicePath, clientHost)
     }
 
     private func authenticateRequest(_ req: Request) -> Bool {
         func fetchAllAuthTokens() -> [String] {
-            guard let authedServices = try? authedServicesPath.children() else { return [] }
+            guard let authedServices = try? PathHelper.authedServicesPath.children() else { return [] }
             var tokens = [String]()
             let decoder = JSONDecoder()
             for service in authedServices {
@@ -181,11 +173,5 @@ private struct PostBodyAuth: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
-    }
-}
-
-private struct PathHelper {
-    static var root: Path {
-        return Path(DirectoryConfig.detect().workDir)
     }
 }
