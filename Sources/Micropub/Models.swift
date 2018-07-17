@@ -16,10 +16,6 @@ public struct MicropubBlogPostRequest: Codable {
     public let photo: File?
 }
 
-public struct Upload: Content {
-    public let files: [File]
-}
-
 struct MediaUpload: Content {
     let file: File?
 }
@@ -52,6 +48,7 @@ struct AuthedService: Codable {
         }
     }
 
+    let me: String
     let clientID: String
     let authCode: String
     var authToken: Token?

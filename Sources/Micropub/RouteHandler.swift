@@ -37,12 +37,19 @@ public struct MicropubRouteHandler: RouteCollection {
             }
 
             guard var components = URLComponents(string: auth.redirectURI) else {
+                let logger = try req.make(Logger.self)
+                logger.info("Error making components from \(auth.redirectURI)")
                 return req.makeResponse(http: HTTPResponse())
             }
-            let codeQuery = URLQueryItem(name: "code", value: code)
-            let state = URLQueryItem(name: "state", value: auth.state)
-            components.queryItems = [codeQuery, state]
 
+            var items = component.queryItems ?? []
+
+            let code = URLQueryItem(name: "code", value: code)
+            items.append(code)
+            let state = URLQueryItem(name: "state", value: auth.state)
+            items.append(state)
+
+            components.queryItems = items
             guard let redirect = components.string else { return req.makeResponse(http: HTTPResponse()) }
             return req.redirect(to: redirect)
         }
@@ -133,45 +140,5 @@ public struct MicropubRouteHandler: RouteCollection {
             else { throw MicropubError.invalidClient }
         let servicePath = PathHelper.authedServicesPath + Path(clientHost)
         return (servicePath, clientHost)
-    }
-
-    private func authenticateRequest(_ req: Request) -> Bool {
-        func fetchAllAuthTokens() -> [String] {
-            guard let authedServices = try? PathHelper.authedServicesPath.children() else { return [] }
-            var tokens = [String]()
-            let decoder = JSONDecoder()
-            for service in authedServices {
-                do {
-                    let serviceData = try service.read()
-                    let service = try decoder.decode(AuthedService.self, from: serviceData)
-                    guard let token = service.authToken else { continue }
-                    tokens.append(token.value)
-                }
-                catch {
-                    continue
-                }
-            }
-
-            return tokens
-        }
-
-        let tokens = fetchAllAuthTokens()
-        if let authHeader = req.http.headers.firstValue(name: .authorization) {
-            let split = authHeader.split(separator: " ")
-            guard let token = split.last else { return false }
-            return tokens.contains(String(token))
-        }
-        else {
-            guard let auth = try? req.content.syncDecode(PostBodyAuth.self) else { return false }
-            return tokens.contains(auth.accessToken)
-        }
-    }
-}
-
-private struct PostBodyAuth: Codable {
-    let accessToken: String
-
-    private enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
     }
 }
