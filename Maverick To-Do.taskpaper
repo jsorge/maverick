@@ -27,6 +27,8 @@ Vapor App:
 		1. Convert the markdown to html
 		1. Pass the data to the theme
 	Bugs:
+		- Add symbolication to crash logs
+			 https://stackoverflow.com/questions/44954314/swift-debugging-on-linux-missing-backtrace#44956167
 		- dates aren't working anywhere @done
 			- footer @done
 			- above a post title @done
