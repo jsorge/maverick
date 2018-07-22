@@ -30,7 +30,8 @@ public struct MicropubRouteHandler: RouteCollection {
             }
             else {
                 code = UUID().base64Encoded
-                let service = Micropub.AuthedService(clientID: client.id, authCode: code, authToken: nil)
+                let service = Micropub.AuthedService(me: self.config.url.absoluteString, clientID: client.id,
+                                                     authCode: code, authToken: nil)
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(service)
                 try client.servicePath.write(data)
@@ -42,10 +43,10 @@ public struct MicropubRouteHandler: RouteCollection {
                 return req.makeResponse(http: HTTPResponse())
             }
 
-            var items = component.queryItems ?? []
+            var items = components.queryItems ?? []
 
-            let code = URLQueryItem(name: "code", value: code)
-            items.append(code)
+            let codeItem = URLQueryItem(name: "code", value: code)
+            items.append(codeItem)
             let state = URLQueryItem(name: "state", value: auth.state)
             items.append(state)
 
@@ -95,7 +96,7 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.get("micropub") { req -> Response in
-            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
 
             var response = HTTPResponse()
             let item = try req.query.get(String.self, at: ["q"])
@@ -110,7 +111,7 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.post("micropub") { req -> Future<Response> in
-            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
                 try self.config.newPostHandler(postRequest)
@@ -119,7 +120,7 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.post(micropubPathComponent, mediaPathComponent) { req -> Future<Response> in
-            guard self.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
             return try req.content.decode(MediaUpload.self).map(to: Response.self, { upload in
                 if let location = try self.config.contentReceivedHandler(upload.file) {
                     var response = HTTPResponse(status: .created)

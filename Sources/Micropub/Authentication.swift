@@ -3,7 +3,7 @@ import PathKit
 import Vapor
 
 struct AuthHelper {
-    func authenticateRequest(_ req: Request) -> Bool {
+    static func authenticateRequest(_ req: Request) -> Bool {
         let tokens = fetchAllAuthTokens()
         if let authHeader = req.http.headers.firstValue(name: .authorization) {
             let split = authHeader.split(separator: " ")
@@ -16,7 +16,7 @@ struct AuthHelper {
         }
     }
     
-    private func fetchAllAuthTokens() -> [String] {
+    static private func fetchAllAuthTokens() -> [String] {
         guard let authedServices = try? PathHelper.authedServicesPath.children() else { return [] }
         var tokens = [String]()
         let decoder = JSONDecoder()

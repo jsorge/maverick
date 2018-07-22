@@ -1,4 +1,5 @@
 import PathKit
+import Vapor
 
 struct PathHelper {
     static var root: Path {
