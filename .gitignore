@@ -73,5 +73,7 @@ fastlane/test_output
 
 # User data
 authorizations/*
-/_dev
-/nginx
+_dev/*
+nginx/*
+.tools/*
+tools/nginx/*

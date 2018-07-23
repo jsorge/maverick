@@ -13,7 +13,7 @@ services:
     entrypoint: make docker-run
   nginx:
     build:
-      context: ./_dev
+      context: ./_dev/.tools
       dockerfile: ./nginx/Dockerfile-nginx
       args:
         build_domain: jsorge.local
@@ -24,8 +24,8 @@ services:
       - 443:443
     volumes:
       - ./Public:/home/maverick/Public
-      - ./nginx/ssl:/var/www/ssl
-      - ./nginx/logs:/var/log/nginx
+      - ./.tools/nginx/ssl:/var/www/ssl
+      - ./.tools/nginx/logs:/var/log/nginx
     depends_on:
       - maverick
   
