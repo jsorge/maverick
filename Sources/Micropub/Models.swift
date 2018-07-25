@@ -77,7 +77,21 @@ struct TokenOutput: Codable {
     let accessToken: String
     let scope: String?
     let me: String
-    
+
+    var urlEncodedString: String {
+        let token = URLQueryItem(name: "access_token", value: self.accessToken)
+        let me = URLQueryItem(name: "me", value: self.me.urlEncoded())
+
+        var components = URLComponents()
+        components.queryItems = [token, me]
+        if self.scope != nil {
+            let scope = URLQueryItem(name: "scope", value: self.scope)
+            components.queryItems!.append(scope)
+        }
+
+        return components.query!
+    }
+
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case scope

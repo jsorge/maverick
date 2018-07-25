@@ -85,9 +85,7 @@ public struct MicropubRouteHandler: RouteCollection {
                     response.body = HTTPBody(data: jsonData)
                 }
                 else {
-                    let encoder = FormDataEncoder()
-                    let formData = try encoder.encode(output,
-                                                      boundary: "MaverickAuthTokenOutput".convertToData())
+                    let formData = output.urlEncodedString.data(using: .utf8)!
                     response.body = HTTPBody(data: formData)
                 }
 
