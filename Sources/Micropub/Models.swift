@@ -36,6 +36,25 @@ struct Auth: Codable {
         case authCode = "code"
         case state
     }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.me = try container.decode(String.self, forKey: .me)
+        self.redirectURI = try container.decode(String.self, forKey: .redirectURI)
+        self.clientID = try container.decode(String.self, forKey: .clientID)
+        self.scope = try container.decode(String.self, forKey: .scope)
+        self.authCode = try container.decodeIfPresent(String.self, forKey: .authCode)
+        
+        var state: String? = nil
+        if let stateStr = try container.decodeIfPresent(String.self, forKey: .state) {
+            state = stateStr
+        }
+        else if let stateInt = try container.decodeIfPresent(Int.self, forKey: .state) {
+            state = "\(stateInt)"
+        }
+        self.state = state
+    }
 }
 
 struct AuthedService: Codable {

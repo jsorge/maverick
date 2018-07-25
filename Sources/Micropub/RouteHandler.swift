@@ -21,7 +21,7 @@ public struct MicropubRouteHandler: RouteCollection {
     public func boot(router: Router) throws {
         router.get("auth") { req -> Response in
             let auth = try req.query.decode(Auth.self)
-            let client = try self.makeClientFor(clientID: auth.clientID)
+            let client = self.makeClientFor(clientID: auth.clientID)
             let code: String
             if let serviceData = try? client.servicePath.read() {
                 let decoder = JSONDecoder()
@@ -57,7 +57,7 @@ public struct MicropubRouteHandler: RouteCollection {
 
         router.post("token") { req -> Future<Response> in
             return try req.content.decode(Auth.self).map({ auth -> Response in
-                let client = try self.makeClientFor(clientID: auth.clientID)
+                let client = self.makeClientFor(clientID: auth.clientID)
 
                 guard client.servicePath.exists else { throw MicropubError.unknownClient }
 
@@ -135,11 +135,9 @@ public struct MicropubRouteHandler: RouteCollection {
         }
     }
 
-    private func makeClientFor(clientID: String?) throws -> (servicePath: Path, id: String) {
-        guard let clientID = clientID,
-            let clientHost = URLComponents(string: clientID)?.host
-            else { throw MicropubError.invalidClient }
-        let servicePath = PathHelper.authedServicesPath + Path(clientHost)
-        return (servicePath, clientHost)
+    private func makeClientFor(clientID: String) -> (servicePath: Path, id: String) {
+        let encodedClient = clientID.urlEncoded()
+        let servicePath = PathHelper.authedServicesPath + Path(encodedClient)
+        return (servicePath, encodedClient)
     }
 }
