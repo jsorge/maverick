@@ -24,7 +24,7 @@ struct Auth: Codable {
     let me: String
     let redirectURI: String
     let clientID: String
-    let scope: String
+    let scope: String?
     let authCode: String?
     let state: String?
 
@@ -43,7 +43,7 @@ struct Auth: Codable {
         self.me = try container.decode(String.self, forKey: .me)
         self.redirectURI = try container.decode(String.self, forKey: .redirectURI)
         self.clientID = try container.decode(String.self, forKey: .clientID)
-        self.scope = try container.decode(String.self, forKey: .scope)
+        self.scope = try container.decodeIfPresent(String.self, forKey: .scope)
         self.authCode = try container.decodeIfPresent(String.self, forKey: .authCode)
         
         var state: String? = nil
