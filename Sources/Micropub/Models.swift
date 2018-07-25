@@ -77,4 +77,10 @@ struct TokenOutput: Codable {
     let accessToken: String
     let scope: String?
     let me: String
+    
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case scope
+        case me
+    }
 }
