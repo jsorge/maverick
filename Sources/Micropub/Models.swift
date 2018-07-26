@@ -14,6 +14,7 @@ public struct MicropubBlogPostRequest: Codable {
     public let content: String
     public let date = Date()
     public let photo: File?
+    public let category: [String]?
 }
 
 struct MediaUpload: Content {

@@ -52,6 +52,7 @@ private func makeWholeFileContents(fromMicropub micropub: MicropubBlogPostReques
     ---
     title: \(micropub.name ?? "")
     date: \(formatter.string(from: micropub.date))
+    category: \(micropub.category?.joined(separator: ", ") ?? "")
     ---
     \(micropub.content)
     """
