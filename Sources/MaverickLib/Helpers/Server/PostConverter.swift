@@ -21,6 +21,9 @@ struct PostConverter {
         try TextBundleify.start(in: PathHelper.incomingPostPath, pathToAssets: PathHelper.incomingMediaPath)
         let incomingBundlePath = PathHelper.incomingPostPath + Path("\(postPath.asFilename).textbundle")
         let destinationBundlePath = PathHelper.postFolderPath + Path("\(postPath.asFilename).textbundle")
+        if destinationBundlePath.exists {
+            try? destinationBundlePath.delete()
+        }
         try incomingBundlePath.move(destinationBundlePath)
         
         try FeedOutput.makeAllTheFeeds()        
