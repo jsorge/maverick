@@ -94,7 +94,10 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.get("micropub") { req -> Response in
-            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else {
+                let response = HTTPResponse(status: .unauthorized)
+                return req.makeResponse(http: response)
+            }
 
             var response = HTTPResponse()
             let item = try req.query.get(String.self, at: ["q"])
@@ -109,7 +112,13 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.post("micropub") { req -> Future<Response> in
-            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else {
+                let response = HTTPResponse(status: .unauthorized)
+                return Future.map(on: req) {
+                    return req.makeResponse(http: response)
+                }
+            }
+
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
                 
@@ -124,7 +133,13 @@ public struct MicropubRouteHandler: RouteCollection {
         }
 
         router.post(micropubPathComponent, mediaPathComponent) { req -> Future<Response> in
-            guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
+            guard AuthHelper.authenticateRequest(req) else {
+                let response = HTTPResponse(status: .unauthorized)
+                return Future.map(on: req) {
+                    return req.makeResponse(http: response)
+                }
+            }
+            
             return try req.content.decode(MediaUpload.self).map(to: Response.self, { upload in
                 if let location = try self.config.contentReceivedHandler(upload.file) {
                     var response = HTTPResponse(status: .created)
