@@ -13,7 +13,7 @@ public struct MicropubBlogPostRequest: Codable {
     public let name: String?
     public let content: String
     public let date = Date()
-    public let photo: File?
+    public let photo: String?
     public let category: [String]?
 }
 

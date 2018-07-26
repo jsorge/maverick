@@ -18,20 +18,12 @@ struct PostConverter {
         try PathHelper.prepTheTemporaryPaths()
         try mdPath.write(blogPost)
 
-        var photoPath: Path? = nil
-        if let image = post.photo {
-            photoPath = PathHelper.incomingMediaPath + Path(image.filename)
-            try photoPath!.write(image.data)
-        }
-
         try TextBundleify.start(in: PathHelper.incomingPostPath, pathToAssets: PathHelper.incomingMediaPath)
         let incomingBundlePath = PathHelper.incomingPostPath + Path("\(postPath.asFilename).textbundle")
         let destinationBundlePath = PathHelper.postFolderPath + Path("\(postPath.asFilename).textbundle")
         try incomingBundlePath.move(destinationBundlePath)
         
-        try FeedOutput.makeAllTheFeeds()
-        try? photoPath?.delete()
-        
+        try FeedOutput.makeAllTheFeeds()        
         return postPath.asURIPath
     }
 }
@@ -48,7 +40,7 @@ private func makeWholeFileContents(fromMicropub micropub: MicropubBlogPostReques
         .withColonSeparatorInTime
     ]
 
-    return """
+    var content = """
     ---
     title: \(micropub.name ?? "")
     date: \(formatter.string(from: micropub.date))
@@ -56,6 +48,12 @@ private func makeWholeFileContents(fromMicropub micropub: MicropubBlogPostReques
     ---
     \(micropub.content)
     """
+    
+    if let photo = micropub.photo {
+        content += "\n![](\(photo))"
+    }
+
+    return content
 }
 
 private extension PostPath {
