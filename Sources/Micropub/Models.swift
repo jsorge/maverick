@@ -15,6 +15,33 @@ public struct MicropubBlogPostRequest: Codable {
     public let date = Date()
     public let photo: String?
     public let category: [String]?
+    
+    enum CodingKeys: String, CodingKey {
+        case h
+        case name
+        case content
+        case photo
+        case category
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.h = try container.decode(String.self, forKey: .h)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.content = try container.decode(String.self, forKey: .content)
+        self.photo = try container.decodeIfPresent(String.self, forKey: .photo)
+        
+        if let category = try container.decodeIfPresent(String.self, forKey: .category) {
+            self.category = [category]
+        }
+        else if let categories = try container.decodeIfPresent([String].self, forKey: .category) {
+            self.category = categories
+        }
+        else {
+            self.category = nil
+        }
+    }
 }
 
 struct MediaUpload: Content {
