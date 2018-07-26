@@ -11,7 +11,7 @@ import TextBundleify
 import PathKit
 
 struct PostConverter {
-    static func saveMicropubPost(_ post: MicropubBlogPostRequest) throws {
+    static func saveMicropubPost(_ post: MicropubBlogPostRequest) throws -> String {
         let blogPost = makeWholeFileContents(fromMicropub: post)
         let postPath = PostPath.from(micropub: post)
         let mdPath = PathHelper.incomingPostPath + Path("\(postPath.asFilename).md")
@@ -25,10 +25,14 @@ struct PostConverter {
         }
 
         try TextBundleify.start(in: PathHelper.incomingPostPath, pathToAssets: PathHelper.incomingMediaPath)
-        try (PathHelper.incomingPostPath + Path("\(postPath.asFilename).textbundle"))
-            .move(PathHelper.postFolderPath + Path("\(postPath.asFilename).textbundle"))
+        let incomingBundlePath = PathHelper.incomingPostPath + Path("\(postPath.asFilename).textbundle")
+        let destinationBundlePath = PathHelper.postFolderPath + Path("\(postPath.asFilename).textbundle")
+        try incomingBundlePath.move(destinationBundlePath)
+        
         try FeedOutput.makeAllTheFeeds()
         try? photoPath?.delete()
+        
+        return postPath.asURIPath
     }
 }
 

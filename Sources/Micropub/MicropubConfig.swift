@@ -8,7 +8,7 @@
 import Foundation
 import Vapor
 
-public typealias NewPostHandler = (_ request: MicropubBlogPostRequest) throws -> ()
+public typealias NewPostHandler = (_ request: MicropubBlogPostRequest) throws -> String
 public typealias ContentReceivedHandler = (_ content: File?) throws -> String?
 
 public struct MicropubConfig {

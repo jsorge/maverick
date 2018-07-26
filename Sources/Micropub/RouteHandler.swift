@@ -112,8 +112,14 @@ public struct MicropubRouteHandler: RouteCollection {
             guard AuthHelper.authenticateRequest(req) else { throw MicropubError.authenticationFailed }
             return try req.content.decode(MicropubBlogPostRequest.self).map { postRequest -> Response in
                 guard postRequest.h == "entry" else { throw MicropubError.UnsupportedHProperty }
-                try self.config.newPostHandler(postRequest)
-                return req.makeResponse()
+                
+                let path = try self.config.newPostHandler(postRequest)
+                let location = self.config.url.appendingPathComponent(path)
+                
+                var response = HTTPResponse(status: .created)
+                response.headers.replaceOrAdd(name: "Location", value: location.absoluteString)
+
+                return req.makeResponse(http: response)
             }
         }
 
