@@ -32,10 +32,10 @@ public struct MicropubBlogPostRequest: Codable {
         self.content = try container.decode(String.self, forKey: .content)
         self.photo = try container.decodeIfPresent(String.self, forKey: .photo)
         
-        if let category = try container.decodeIfPresent(String.self, forKey: .category) {
+        if let category = try? container.decode(String.self, forKey: .category) {
             self.category = [category]
         }
-        else if let categories = try container.decodeIfPresent([String].self, forKey: .category) {
+        else if let categories = try? container.decode([String].self, forKey: .category) {
             self.category = categories
         }
         else {
@@ -75,10 +75,10 @@ struct Auth: Codable {
         self.authCode = try container.decodeIfPresent(String.self, forKey: .authCode)
         
         var state: String? = nil
-        if let stateStr = try container.decodeIfPresent(String.self, forKey: .state) {
+        if let stateStr = try? container.decode(String.self, forKey: .state) {
             state = stateStr
         }
-        else if let stateInt = try container.decodeIfPresent(Int.self, forKey: .state) {
+        else if let stateInt = try? container.decode(Int.self, forKey: .state) {
             state = "\(stateInt)"
         }
         self.state = state
