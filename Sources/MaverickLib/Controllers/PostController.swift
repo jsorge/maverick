@@ -18,7 +18,22 @@ struct SinglePostRouteCollection: RouteCollection {
     }
     
     func boot(router: Router) throws {
-        router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<View> in
+        func attemptToFindPost(withSlug slug: String, for req: Request) throws -> Future<Response> {
+            let posts = try PathHelper.pathsForAllPosts()
+            guard let filePath = posts.filter({ $0.lastComponentWithoutExtension.contains(slug) }).first,
+                let postPath = PostPath(path: filePath) else {
+                    return Future.map(on: req) {
+                        return req.makeResponse(http: HTTPResponse(status: .notFound))
+                    }
+            }
+            
+            let urlPath = self.config.url.appendingPathComponent(postPath.asURIPath)
+            return Future.map(on: req) {
+                return req.redirect(to: urlPath.absoluteString, type: .permanent)
+            }
+        }
+        
+        router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<Response> in
             let leaf = try req.make(LeafRenderer.self)
             
             let year = try req.parameters.next(Int.self)
@@ -27,10 +42,21 @@ struct SinglePostRouteCollection: RouteCollection {
             let slug = try req.parameters.next(String.self)
             let path = PostPath(year: year, month: month, day: day, slug: slug)
             
-            let postController = PostController(site: self.config)
-            let post = try postController.fetchPost(withPath: path, outputtingFor: .fullText)
-            let outputPage = Page(style: .single(post: post), site: self.config, title: post.title ?? self.config.title)
-            return leaf.render("post", outputPage)
+            do {
+                let postController = PostController(site: self.config)
+                let post = try postController.fetchPost(withPath: path, outputtingFor: .fullText)
+                let outputPage = Page(style: .single(post: post), site: self.config, title: post.title ?? self.config.title)
+                
+                var response = HTTPResponse()
+                response.contentType = .html
+                return leaf.render("post", outputPage).map { view -> Response in
+                    response.body = HTTPBody(data: view.data)
+                    return req.makeResponse(http: response)
+                }
+            }
+            catch {
+                return try attemptToFindPost(withSlug: path.slug, for: req)
+            }
         }
         
         router.get("draft", String.parameter) { req -> Future<Response> in
@@ -50,18 +76,7 @@ struct SinglePostRouteCollection: RouteCollection {
                 }
             }
             catch {
-                let posts = try PathHelper.pathsForAllPosts()
-                guard let filePath = posts.filter({ $0.lastComponentWithoutExtension.contains(slug) }).first,
-                    let postPath = PostPath(path: filePath) else {
-                    return Future.map(on: req) {
-                        return req.makeResponse(http: HTTPResponse(status: .notFound))
-                    }
-                }
-                
-                let urlPath = self.config.url.appendingPathComponent(postPath.asURIPath)
-                return Future.map(on: req) {
-                    return req.redirect(to: urlPath.absoluteString, type: .permanent)
-                }
+                return try attemptToFindPost(withSlug: slug, for: req)
             }
         }
     }
