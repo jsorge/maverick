@@ -21,7 +21,16 @@ public func configure(
     try services.register(MaverickLeafProvider())
 
     var middleware = MiddlewareConfig.default()
-    middleware.use(FileMiddleware.self)
+    
+    let files: FileMiddleware
+    if isDebug() {
+        files = FileMiddleware(publicDirectory: "\(DirectoryConfig.detect().workDir)/_dev/Public")
+    }
+    else {
+        files = FileMiddleware(publicDirectory: "\(DirectoryConfig.detect().workDir)/Public")
+    }
+    middleware.use(files)
+    
     services.register(middleware)
 }
 

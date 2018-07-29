@@ -12,8 +12,8 @@ import Vapor
 
 struct MicropubHelper {
     static func makeConfig(fromSite site: SiteConfig) -> MicropubConfig {
-        let newPostHandler: NewPostHandler = { request throws in
-            try PostConverter.saveMicropubPost(request)
+        let newPostHandler: NewPostHandler = { request throws -> String in
+            return try PostConverter.saveMicropubPost(request)
         }
 
         let contentHandler: ContentReceivedHandler = { file throws -> String? in
