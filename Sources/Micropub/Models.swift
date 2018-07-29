@@ -52,7 +52,7 @@ struct Auth: Codable {
     let me: String
     let redirectURI: String
     let clientID: String
-    let scope: String?
+    let scope: [AuthScope]?
     let authCode: String?
     let state: String?
 
@@ -71,7 +71,7 @@ struct Auth: Codable {
         self.me = try container.decode(String.self, forKey: .me)
         self.redirectURI = try container.decode(String.self, forKey: .redirectURI)
         self.clientID = try container.decode(String.self, forKey: .clientID)
-        self.scope = try container.decodeIfPresent(String.self, forKey: .scope)
+        self.scope = AuthScope.makeFromString(try? container.decode(String.self, forKey: .scope))
         self.authCode = try container.decodeIfPresent(String.self, forKey: .authCode)
         
         var state: String? = nil
@@ -84,6 +84,37 @@ struct Auth: Codable {
         self.state = state
     }
 }
+
+enum AuthScope: String, Codable {
+    case create
+    case update
+    case delete
+    
+    static func makeFromString(_ inputStr: String?) -> [AuthScope]? {
+        guard let inputStr = inputStr else { return nil }
+        let components = inputStr.split(separator: " ")
+        return components.compactMap { AuthScope(rawValue: String($0)) }
+    }
+}
+
+extension Array where Element == AuthScope {
+    func asSingleString() -> String {
+#if swift(>=4.2)
+#warning("Replace this with the joined array implementation")
+#endif
+        var output = ""
+        for (_, scope) in self.enumerated() {
+            output += scope.rawValue
+            
+            if scope != self.last {
+                output += " "
+            }
+        }
+        
+        return output
+    }
+}
+
 
 struct AuthedService: Codable {
     struct Token: Codable {
@@ -98,12 +129,13 @@ struct AuthedService: Codable {
     let me: String
     let clientID: String
     let authCode: String
+    var scope: [AuthScope]?
     var authToken: Token?
 }
 
 struct TokenOutput: Codable {
     let accessToken: String
-    let scope: String?
+    let scope: [AuthScope]?
     let me: String
 
     var urlEncodedString: String {
@@ -113,7 +145,7 @@ struct TokenOutput: Codable {
         var components = URLComponents()
         components.queryItems = [token, me]
         if self.scope != nil {
-            let scope = URLQueryItem(name: "scope", value: self.scope)
+            let scope = URLQueryItem(name: "scope", value: self.scope?.asSingleString())
             components.queryItems!.append(scope)
         }
 

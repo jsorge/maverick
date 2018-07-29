@@ -30,8 +30,8 @@ public struct MicropubRouteHandler: RouteCollection {
             }
             else {
                 code = UUID().base64Encoded
-                let service = Micropub.AuthedService(me: self.config.url.absoluteString, clientID: client.id,
-                                                     authCode: code, authToken: nil)
+                let service = AuthedService(me: self.config.url.absoluteString, clientID: client.id,
+                                            authCode: code, scope: auth.scope, authToken: nil)
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(service)
                 try client.servicePath.write(data)
@@ -74,12 +74,10 @@ public struct MicropubRouteHandler: RouteCollection {
                 let updatedData = try encoder.encode(service)
                 try client.servicePath.write(updatedData)
 
-                let output = Micropub.TokenOutput(accessToken: service.authToken!.value, scope: auth.scope,
+                let output = Micropub.TokenOutput(accessToken: service.authToken!.value, scope: service.scope,
                                                   me: auth.me)
                 var response = HTTPResponse()
-                if let header = req.http.headers.firstValue(name: HTTPHeaderName("Content-Type")),
-                    header.contains("json")
-                {
+                if let header = req.http.headers.firstValue(name: .contentType), header.contains("json") {
                     let jsonEncoder = JSONEncoder()
                     let jsonData = try jsonEncoder.encode(output)
                     response.body = HTTPBody(data: jsonData)
