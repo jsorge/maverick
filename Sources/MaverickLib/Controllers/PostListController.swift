@@ -48,14 +48,25 @@ struct PostListController {
         let allPostPaths = try PathHelper.pathsForAllPosts()
         
         let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
-        let batchRange = ((pageNumber - 1) * config.batchSize)...(pageNumber * (config.batchSize - 1))
+
+        let batchStart = (pageNumber - 1) * config.batchSize
+        var batchEnd = batchStart + config.batchSize
+        if batchEnd > allPostPaths.count {
+            batchEnd = allPostPaths.count - 1
+        }
+        let batchRange = batchStart..<batchEnd
         let neededPaths = Array(postsPaths[batchRange])
+
         let postController = PostController(site: config)
         let posts = neededPaths
                     .compactMap({ try? postController.fetchPost(withPath: $0, outputtingFor: .fullText) })
                     .sorted(by: { $0.date > $1.date })
 
-        let pageCount = allPostPaths.count / config.batchSize
+        var pageCount = allPostPaths.count / config.batchSize
+        if allPostPaths.count % config.batchSize != 0 {
+            pageCount += 1
+        }
+
         let olderLink: String?
         if pageNumber + 1 <= pageCount {
             olderLink = "/page/\(pageNumber + 1)"
