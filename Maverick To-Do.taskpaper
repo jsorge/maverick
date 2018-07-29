@@ -1,6 +1,6 @@
-- Support drafts
-	- Add a new path `https://blog.com/draft/slug-goes-here
-	- When the draft becomes a post, the draft URL should redirect properly
+- Support drafts @done
+	- Add a new path `https://blog.com/draft/slug-goes-here @done
+	- When the draft becomes a post, the draft URL should redirect properly @done
 API:
 	- micropub
 		- confirm login
@@ -21,7 +21,7 @@ Routing:
 	1. Pass the data to the theme
 Bugs:
 		- Add symbolication to crash logs
-			 https://stackoverflow.com/questions/44954314/swift-debugging-on-linux-missing-backtrace#44956167
+			https://stackoverflow.com/questions/44954314/swift-debugging-on-linux-missing-backtrace#44956167
 	- dates aren't working anywhere @done
 		- footer @done
 		- above a post title @done

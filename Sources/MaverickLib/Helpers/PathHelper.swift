@@ -12,6 +12,7 @@ import Vapor
 enum Location: String {
     case pages = "_pages"
     case posts = "_posts"
+    case drafts = "_drafts"
 }
 
 struct PathHelper {
@@ -33,7 +34,7 @@ struct PathHelper {
     }()
     
     static var postFolderPath: Path = {
-       let postsPath = publicFolderPath + Path(Location.posts.rawValue)
+        let postsPath = publicFolderPath + Path(Location.posts.rawValue)
         return postsPath
     }()
     

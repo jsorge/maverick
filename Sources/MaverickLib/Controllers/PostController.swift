@@ -32,6 +32,38 @@ struct SinglePostRouteCollection: RouteCollection {
             let outputPage = Page(style: .single(post: post), site: self.config, title: post.title ?? self.config.title)
             return leaf.render("post", outputPage)
         }
+        
+        router.get("draft", String.parameter) { req -> Future<Response> in
+            let leaf = try req.make(LeafRenderer.self)
+            let slug = try req.parameters.next(String.self)
+            
+            do {
+                let post = try StaticPageController.fetchStaticPage(named: slug, in: .drafts)
+                let outputPage = Page(style: .single(post: post), site: self.config,
+                                      title: post.title ?? self.config.title)
+                
+                var response = HTTPResponse()
+                response.contentType = .html
+                return leaf.render("post", outputPage).map { view -> Response in
+                    response.body = HTTPBody(data: view.data)
+                    return req.makeResponse(http: response)
+                }
+            }
+            catch {
+                let posts = try PathHelper.pathsForAllPosts()
+                guard let filePath = posts.filter({ $0.lastComponentWithoutExtension.contains(slug) }).first,
+                    let postPath = PostPath(path: filePath) else {
+                    return Future.map(on: req) {
+                        return req.makeResponse(http: HTTPResponse(status: .notFound))
+                    }
+                }
+                
+                let urlPath = self.config.url.appendingPathComponent(postPath.asURIPath)
+                return Future.map(on: req) {
+                    return req.redirect(to: urlPath.absoluteString, type: .permanent)
+                }
+            }
+        }
     }
 }
 

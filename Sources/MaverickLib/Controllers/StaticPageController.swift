@@ -31,7 +31,7 @@ struct StaticPageRouter: RouteCollection {
         for page in newPages {
             router.get(page) { req -> Future<View> in
                 let leaf = try req.make(LeafRenderer.self)
-                let post = try StaticPageController.fetchStaticPage(named: page)
+                let post = try StaticPageController.fetchStaticPage(named: page, in: .pages)
                 let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
                 return leaf.render("post", outputPage)
             }
@@ -41,9 +41,9 @@ struct StaticPageRouter: RouteCollection {
     }
 }
 
-private struct StaticPageController {
-    static func fetchStaticPage(named pageName: String) throws -> Post {
-        let base = try FileReader.attemptToReadFile(named: pageName, in: .pages)
+struct StaticPageController {
+    static func fetchStaticPage(named pageName: String, in location: Location) throws -> Post {
+        let base = try FileReader.attemptToReadFile(named: pageName, in: location)
         let assetsPath = PathHelper.makeBundleAssetsPath(filename: pageName, location: .pages)
         let formattedContent = try FileProcessor.processMarkdownText(base.content, for: assetsPath)
         let post = Post(url: "/\(pageName)",
