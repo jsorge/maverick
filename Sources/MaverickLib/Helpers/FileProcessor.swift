@@ -13,7 +13,7 @@ struct FileProcessor {
     static func processMarkdownText(_ markdown: Markdown, for urlPath: String) throws -> String {
         var processedText = markdown
         processedText = relinkImagesInText(processedText, urlPath: urlPath)
-        processedText = try markdownToHTML(processedText, options: [.safe])
+        processedText = try markdownToHTML(processedText, options: [])
         return processedText
     }
 
