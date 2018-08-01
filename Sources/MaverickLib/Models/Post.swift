@@ -36,8 +36,10 @@ struct Post: Codable {
     let isBlogPost: Bool
     let frontMatter: FrontMatter
     let path: PostPath?
+    let shortDescription: String?
     
-    init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?) {
+    init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?)
+    {
         self.date = frontMatter.date
         self.formattedDate = Post.dateFormatter.string(from: frontMatter.date)
         self.url = url
@@ -46,6 +48,7 @@ struct Post: Codable {
         self.isBlogPost = (frontMatter.isStaticPage == false)
         self.frontMatter = frontMatter
         self.path = path
+        self.shortDescription = frontMatter.shortDescription
     }
 }
 
@@ -70,6 +73,7 @@ struct FrontMatter: Codable {
     let guid: String?
     let date: Date
     let isStaticPage: Bool
+    let shortDescription: String
     
     private enum CodingKeys: String, CodingKey {
         case isMicroblog = "microblog"
@@ -78,6 +82,7 @@ struct FrontMatter: Codable {
         case guid = "guid"
         case date = "date"
         case isStaticPage = "staticpage"
+        case shortDescription = "shortdescription"
     }
     
     init(from decoder: Decoder) throws {
@@ -87,14 +92,23 @@ struct FrontMatter: Codable {
         self.layout = try container.decodeIfPresent(String.self, forKey: .layout)
         self.guid = try container.decodeIfPresent(String.self, forKey: .guid)
         self.isStaticPage = try container.decodeIfPresent(Bool.self, forKey: .isStaticPage) ?? false
+        self.shortDescription = try container.decodeIfPresent(String.self, forKey: .shortDescription) ?? ""
         
         // Dates are finicky.
         // We expect them to come in in `2018-07-11 06:29:36` format
+        // But they could also come in `2018-08-01T01:57:13Z` format
         let dateString = try container.decode(String.self, forKey: .date)
-        let date = FrontMatter.formatter.date(from: dateString)
-        if date == nil {
+        let date: Date
+        if let parsedDate = FrontMatter.formatter.date(from: dateString) {
+            date = parsedDate
+        }
+        else if let parsedDate = ISO8601DateFormatter().date(from: dateString) {
+            date = parsedDate
+        }
+        else {
+            date = Date()
             MaverickLogger.shared?.error("Error parsing date: \(dateString), for: \(self.title ?? "untitled")")
         }
-        self.date = date ?? Date()
+        self.date = date
     }
 }

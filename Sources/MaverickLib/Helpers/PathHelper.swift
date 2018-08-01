@@ -13,6 +13,15 @@ enum Location: String {
     case pages = "_pages"
     case posts = "_posts"
     case drafts = "_drafts"
+    
+    var webPathComponent: String? {
+        switch self {
+        case .drafts:
+            return "draft"
+        default:
+            return nil
+        }
+    }
 }
 
 struct PathHelper {

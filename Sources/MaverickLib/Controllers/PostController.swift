@@ -64,7 +64,7 @@ struct SinglePostRouteCollection: RouteCollection {
             let slug = try req.parameters.next(String.self)
             
             do {
-                let post = try StaticPageController.fetchStaticPage(named: slug, in: .drafts)
+                let post = try StaticPageController.fetchStaticPage(named: slug, in: .drafts, for: self.config)
                 let outputPage = Page(style: .single(post: post), site: self.config,
                                       title: post.title ?? self.config.title)
                 
@@ -102,7 +102,7 @@ struct PostController {
             title = nil
         }
         
-        let post = Post(url: path.asURIPath,
+        let post = Post(url: "\(_site.url)\(path.asURIPath)",
                         title: title,
                         content: formattedContent,
                         frontMatter: base.frontMatter,
