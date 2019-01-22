@@ -21,5 +21,10 @@ let package = Package(
                                             "Vapor",
                                             "Yams"]),
         .target(name: "Maverick", dependencies: ["MaverickLib"]),
+        .testTarget(name: "MaverickLibTests", dependencies: [
+        	"MaverickLib", 
+        	"PathKit",
+        	"TextBundleify",
+        ]),
     ]
 )

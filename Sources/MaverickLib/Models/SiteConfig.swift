@@ -20,6 +20,8 @@ struct SiteConfig: Codable {
     let url: URL
     /// The number of posts to include when listing posts
     let batchSize: Int
+    /// The number of posts included in the feeds
+    let feedSize: Int
     /// The year to go in the footer.
     let year: String = {
         let calendar = Calendar.current
@@ -35,6 +37,7 @@ struct SiteConfig: Codable {
         try container.encode("\(url)", forKey: .url)
         try container.encode(batchSize, forKey: .batchSize)
         try container.encode(year, forKey: .year)
+        try container.encode(feedSize, forKey: .feedSize)
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -44,5 +47,6 @@ struct SiteConfig: Codable {
         case url
         case batchSize
         case year
+        case feedSize
     }
 }
