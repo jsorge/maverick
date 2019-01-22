@@ -36,6 +36,10 @@ struct FeedOutput {
             try outputPath.write(fileText)
         }
 
+        if changed {
+            try sendPingsIfNeeded(config: site)
+        }
+
         return changed
     }
 
@@ -71,7 +75,7 @@ struct FeedOutput {
         return [JSONFeedGenerator.self, RSSFeedGenerator.self]
     }
 
-    private func sendPingsIfNeeded(config: SiteConfig) throws {
+    private static func sendPingsIfNeeded(config: SiteConfig) throws {
         guard let pingURLS = config.sitesToPing else { return }
 
         for url in pingURLS {
