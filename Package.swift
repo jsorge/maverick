@@ -21,6 +21,5 @@ let package = Package(
                                             "Vapor",
                                             "Yams"]),
         .target(name: "Maverick", dependencies: ["MaverickLib"]),
-        .testTarget(name: "AppTests", dependencies: ["MaverickLib"]),
     ]
 )
