@@ -40,7 +40,7 @@ public struct MicropubRouteHandler: RouteCollection {
             guard var components = URLComponents(string: auth.redirectURI) else {
                 let logger = try req.make(Logger.self)
                 logger.info("Error making components from \(auth.redirectURI)")
-                return req.makeResponse(http: HTTPResponse())
+                return req.response(http: HTTPResponse())
             }
 
             var items = components.queryItems ?? []
@@ -51,7 +51,7 @@ public struct MicropubRouteHandler: RouteCollection {
             items.append(state)
 
             components.queryItems = items
-            guard let redirect = components.string else { return req.makeResponse(http: HTTPResponse()) }
+            guard let redirect = components.string else { return req.response(http: HTTPResponse()) }
             return req.redirect(to: redirect)
         }
 
@@ -87,14 +87,14 @@ public struct MicropubRouteHandler: RouteCollection {
                     response.body = HTTPBody(data: formData)
                 }
 
-                return req.makeResponse(http: response)
+                return req.response(http: response)
             })
         }
 
         router.get("micropub") { req -> Response in
             guard AuthHelper.authenticateRequest(req) else {
                 let response = HTTPResponse(status: .unauthorized)
-                return req.makeResponse(http: response)
+                return req.response(http: response)
             }
 
             var response = HTTPResponse()
@@ -106,14 +106,14 @@ public struct MicropubRouteHandler: RouteCollection {
                 response.body = HTTPBody(data: data)
             }
 
-            return req.makeResponse(http: response)
+            return req.response(http: response)
         }
 
         router.post("micropub") { req -> Future<Response> in
             guard AuthHelper.authenticateRequest(req) else {
                 let response = HTTPResponse(status: .unauthorized)
                 return Future.map(on: req) {
-                    return req.makeResponse(http: response)
+                    return req.response(http: response)
                 }
             }
 
@@ -126,7 +126,7 @@ public struct MicropubRouteHandler: RouteCollection {
                 var response = HTTPResponse(status: .created)
                 response.headers.replaceOrAdd(name: "Location", value: location.absoluteString)
 
-                return req.makeResponse(http: response)
+                return req.response(http: response)
             }
         }
 
@@ -134,7 +134,7 @@ public struct MicropubRouteHandler: RouteCollection {
             guard AuthHelper.authenticateRequest(req) else {
                 let response = HTTPResponse(status: .unauthorized)
                 return Future.map(on: req) {
-                    return req.makeResponse(http: response)
+                    return req.response(http: response)
                 }
             }
             
@@ -145,9 +145,9 @@ public struct MicropubRouteHandler: RouteCollection {
                     let encoder = JSONEncoder()
                     let bodyData = try encoder.encode(body)
                     response.body = HTTPBody(data: bodyData)
-                    return req.makeResponse(http: response)
+                    return req.response(http: response)
                 }
-                return req.makeResponse()
+                return req.response()
             })
         }
     }

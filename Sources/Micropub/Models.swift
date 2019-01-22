@@ -99,9 +99,6 @@ enum AuthScope: String, Codable {
 
 extension Array where Element == AuthScope {
     func asSingleString() -> String {
-#if swift(>=4.2)
-#warning("Replace this with the joined array implementation")
-#endif
         var output = ""
         for (_, scope) in self.enumerated() {
             output += scope.rawValue
