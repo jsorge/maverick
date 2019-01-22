@@ -23,7 +23,7 @@ struct SinglePostRouteCollection: RouteCollection {
             guard let filePath = posts.filter({ $0.lastComponentWithoutExtension.contains(slug) }).first,
                 let postPath = PostPath(path: filePath) else {
                     return Future.map(on: req) {
-                        return req.makeResponse(http: HTTPResponse(status: .notFound))
+                        return req.response(http: HTTPResponse(status: .notFound))
                     }
             }
             
@@ -51,7 +51,7 @@ struct SinglePostRouteCollection: RouteCollection {
                 response.contentType = .html
                 return leaf.render("post", outputPage).map { view -> Response in
                     response.body = HTTPBody(data: view.data)
-                    return req.makeResponse(http: response)
+                    return req.response(http: response)
                 }
             }
             catch {
@@ -72,7 +72,7 @@ struct SinglePostRouteCollection: RouteCollection {
                 response.contentType = .html
                 return leaf.render("post", outputPage).map { view -> Response in
                     response.body = HTTPBody(data: view.data)
-                    return req.makeResponse(http: response)
+                    return req.response(http: response)
                 }
             }
             catch {
