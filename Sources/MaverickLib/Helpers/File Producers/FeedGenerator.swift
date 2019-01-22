@@ -70,4 +70,14 @@ struct FeedOutput {
     private static var allGenerators: [FeedGenerator.Type] {
         return [JSONFeedGenerator.self, RSSFeedGenerator.self]
     }
+
+    private func sendPingsIfNeeded(config: SiteConfig) throws {
+        guard let pingURLS = config.sitesToPing else { return }
+
+        for url in pingURLS {
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            URLSession.shared.dataTask(with: request).resume()
+        }
+    }
 }

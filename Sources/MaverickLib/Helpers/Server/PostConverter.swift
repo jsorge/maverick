@@ -26,7 +26,7 @@ struct PostConverter {
         }
         try incomingBundlePath.move(destinationBundlePath)
         
-        try FeedOutput.makeAllTheFeeds()        
+        try FeedOutput.makeAllTheFeeds()
         return postPath.asURIPath
     }
 }
