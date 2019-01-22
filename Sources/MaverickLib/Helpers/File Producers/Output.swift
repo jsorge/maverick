@@ -7,11 +7,7 @@
 
 import Foundation
 
-enum TextOutputType {
+enum TextOutputType: CaseIterable {
     case fullText
     case microblog
-    
-    static var all: [TextOutputType] {
-        return [.fullText, .microblog]
-    }
 }

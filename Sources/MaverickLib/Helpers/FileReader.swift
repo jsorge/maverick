@@ -15,7 +15,7 @@ enum FileReaderError: Error {
 
 struct FileReader {
     static func attemptToReadFile(named filename: String, in location: Location) throws -> BasePost {
-        let dirPath = PathHelper.root + Path("Public/\(location.rawValue)")
+        let dirPath = PathHelper.publicFolderPath + Path("\(location.rawValue)")
         let bundlepath = dirPath + Path("\(filename).textbundle")
         let filepath = bundlepath + Path("text.md")
         
