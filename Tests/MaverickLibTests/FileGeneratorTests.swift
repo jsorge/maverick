@@ -13,7 +13,7 @@ date: '2019-01-21 21:46:47'
 This is a test blog post.
 """
 
-final class MaverickLibTests : XCTestCase {
+final class FileGeneratorTests : XCTestCase {
     static let allTests = [
         ("testFeedsAreGenerated", testFeedsAreGenerated),
         ("testGeneratedFeedsHaveExactSameContentBetweenGenerations", testGeneratedFeedsHaveExactSameContentBetweenGenerations),
