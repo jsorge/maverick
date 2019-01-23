@@ -6,7 +6,7 @@
 
 PROJECT   ?= Maverick.xcodeproj
 CONTAINER ?= jsorge/maverick
-TAG       := $$(git log -1 --pretty=%h)
+TAG       := $$(git describe)
 IMG       := ${CONTAINER}:${TAG}
 LATEST    := ${CONTAINER}:latest
 
