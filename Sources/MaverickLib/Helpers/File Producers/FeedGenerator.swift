@@ -29,9 +29,16 @@ struct FeedOutput {
 
             let fileText = try generator.makeFeed(from: posts, for: site, goingTo: outputType)
             let outputPath = PathHelper.publicFolderPath + Path(filename)
-            let existingTextData = try outputPath.read()
-            let existingText = String(data: existingTextData, encoding: .utf8)
-            changed = fileText != existingText
+
+            if outputPath.exists && changed == false {
+                let existingTextData = try outputPath.read()
+                let existingText = String(data: existingTextData, encoding: .utf8)
+                changed = fileText != existingText
+            }
+            else {
+                changed = true
+            }
+
 
             try outputPath.write(fileText)
         }
