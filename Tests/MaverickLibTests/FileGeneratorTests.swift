@@ -75,6 +75,15 @@ final class FileGeneratorTests : XCTestCase {
         }
     }
 
+    func testGeneratedFeedsWithoutChangesDontReportChanges() throws {
+        try FeedOutput.makeAllTheFeeds() // seeding the files
+        let first = try FeedOutput.makeAllTheFeeds()
+        let second = try FeedOutput.makeAllTheFeeds()
+
+        XCTAssertFalse(first)
+        XCTAssertEqual(first, second)
+    }
+
     func testAddingANewItemChangesTheFeed() throws {
         try FeedOutput.makeAllTheFeeds()
 
