@@ -9,10 +9,13 @@ import Foundation
 import SwiftMarkdown
 
 struct JSONFeedGenerator: FeedGenerator {
-    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String {
+    static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType)
+        throws -> String
+    {
         let items: [JSONFeed.Item] = posts.compactMap({
             let url = site.url.appendingPathComponent($0.path!.asURIPath)
-            return JSONFeed.Item(id: url.absoluteString, url: url, title: $0.title, content: $0.content)
+            return JSONFeed.Item(id: url.absoluteString, url: url, title: $0.title, content: $0.content,
+                                 date: $0.date)
         })
         
         let feed = JSONFeed(title: site.title,
@@ -20,6 +23,7 @@ struct JSONFeedGenerator: FeedGenerator {
                             homepageURL: site.url, items: items)
         
         let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(feed)
         let output = String(data: data, encoding: .utf8)
         return output ?? ""
@@ -64,12 +68,14 @@ private struct JSONFeed: Codable {
         let url: URL
         let title: String?
         let content: String
+        let date: Date
         
         private enum CodingKeys: String, CodingKey {
             case id
             case url
             case title
             case content = "content_html"
+            case date = "date_published"
         }
     }
 }
