@@ -41,7 +41,7 @@ struct Post: Codable {
     init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?)
     {
         self.date = frontMatter.date
-        self.formattedDate = Post.dateFormatter.string(from: frontMatter.date)
+        self.formattedDate = Post.dateFormatter.string(from: frontMatter.timeZoneAdjustedDate)
         self.url = url
         self.title = title
         self.content = content
@@ -53,7 +53,13 @@ struct Post: Codable {
 }
 
 struct FrontMatter: Codable {
-    private static let formatter: ISO8601DateFormatter = {
+    static let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [ .withInternetDateTime ]
+        return formatter
+    }()
+
+    private static let deprecatedFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [
             .withYear,
@@ -74,6 +80,14 @@ struct FrontMatter: Codable {
     let date: Date
     let isStaticPage: Bool
     let shortDescription: String
+
+    var timeZoneAdjustedDate: Date {
+        let offset = Calendar.current.timeZone.secondsFromGMT(for: self.date)
+        guard let adjustedDate = Calendar.current.date(byAdding: .second, value: offset, to: self.date)
+            else { return self.date }
+
+        return adjustedDate
+    }
     
     private enum CodingKeys: String, CodingKey {
         case isMicroblog = "microblog"
@@ -95,11 +109,16 @@ struct FrontMatter: Codable {
         self.shortDescription = try container.decodeIfPresent(String.self, forKey: .shortDescription) ?? ""
         
         // Dates are finicky.
-        // We expect them to come in in `2018-07-11 06:29:36` format
+        // Dates now need to be in internet time (RFC 3339)
+        // We initially expected them to come in in `2018-07-11 06:29:36` format
         // But they could also come in `2018-08-01T01:57:13Z` format
         let dateString = try container.decode(String.self, forKey: .date)
         let date: Date
-        if let parsedDate = FrontMatter.formatter.date(from: dateString) {
+        if let parsedDate = FrontMatter.dateFormatter.date(from: dateString) {
+            date = parsedDate
+            
+        }
+        else if let parsedDate = FrontMatter.deprecatedFormatter.date(from: dateString) {
             date = parsedDate
         }
         else if let parsedDate = ISO8601DateFormatter().date(from: dateString) {

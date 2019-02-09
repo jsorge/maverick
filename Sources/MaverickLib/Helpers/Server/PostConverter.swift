@@ -32,21 +32,10 @@ struct PostConverter {
 }
 
 private func makeWholeFileContents(fromMicropub micropub: MicropubBlogPostRequest) -> String {
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [
-        .withYear,
-        .withMonth,
-        .withDay,
-        .withDashSeparatorInDate,
-        .withTime,
-        .withSpaceBetweenDateAndTime,
-        .withColonSeparatorInTime
-    ]
-
     var content = """
     ---
     title: \(micropub.name ?? "")
-    date: \(formatter.string(from: micropub.date))
+    date: \(FrontMatter.dateFormatter.string(from: micropub.date))
     category: \(micropub.category?.joined(separator: ", ") ?? "")
     ---
     \(micropub.content)
