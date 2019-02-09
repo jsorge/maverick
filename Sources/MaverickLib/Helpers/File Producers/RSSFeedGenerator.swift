@@ -8,6 +8,12 @@
 import Foundation
 import SwiftMarkdown
 
+let rfc822DateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss z"
+    return formatter
+}()
+
 struct RSSFeedGenerator: FeedGenerator {
     static func makeFeed(from posts: [Post], for site: SiteConfig, goingTo type: TextOutputType) throws -> String {
         var feed = """
@@ -42,7 +48,7 @@ private func makeRSSHeaderText(from site: SiteConfig, goingTo type: TextOutputTy
     <link>\(site.url)</link>
     <image><url>\(site.url)/favicon.png</url><title>\(site.title)</title><link>\(site.url)</link></image>
     <generator>\(Constants.App.fullVersion)</generator>
-    <lastbuilddate>\(date)</lastbuilddate>
+    <lastBuildDate>\(date)</lastBuildDate>
     <atom:link href="\(feedLink)" rel="self" type="application/rss+xml" />
     <ttl>60</ttl>
     """
@@ -61,8 +67,9 @@ private func makeFeedItem(from post: Post, for site: SiteConfig) -> String? {
     <item>
     \(title)
     <link>\(site.url)\(post.path!.asURIPath)</link>
-    <guid ispermalink="false">\(post.path!.asURIPath.asBase64)</guid>
-    <pubdate>\(post.formattedDate)</pubdate>
+    <guid isPermaLink="false">\(post.path!.asURIPath.asBase64)</guid>
+    <pubDate>\(post.frontMatter.rssFormattedDate)</pubDate>
+    <description>\(post.frontMatter.shortDescription)</description>
     <content:encoded><![CDATA[\(post.content)]]></content:encoded>
     </item>
     """
@@ -72,5 +79,11 @@ private extension String {
     var asBase64: String {
         let data = self.data(using: .utf8)!
         return data.base64EncodedString()
+    }
+}
+
+private extension FrontMatter {
+    var rssFormattedDate: String {
+        return rfc822DateFormatter.string(from: self.date)
     }
 }
