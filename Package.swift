@@ -3,6 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "Maverick",
+    products: [
+        .library(name: "MaverickModels", targets: ["MaverickModels"]),
+    ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.2.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.2"),
