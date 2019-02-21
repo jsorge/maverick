@@ -84,6 +84,6 @@ private extension String {
 
 private extension FrontMatter {
     var rssFormattedDate: String {
-        return rfc822DateFormatter.string(from: self.timeZoneAdjustedDate)
+        return rfc822DateFormatter.string(from: self.date)
     }
 }
