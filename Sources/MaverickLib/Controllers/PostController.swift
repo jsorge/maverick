@@ -90,18 +90,9 @@ struct PostController {
     func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: path.asFilename, in: .posts)
         
-        let formattedContent: String
-        let title: String?
-        switch (output, base.isMicropostLength) {
-        case (.fullText, _), (.microblog, true):
-            let assetsPath = PathHelper.makeBundleAssetsPath(filename: path.asFilename, location: .posts)
-            formattedContent = try FileProcessor.processMarkdownText(base.content, for: assetsPath)
-            title = base.frontMatter.title
-        case (.microblog, false):
-            formattedContent = makeContentForLongPostInMicroblogFeed(title: base.frontMatter.title, path: path)
-            title = nil
-        }
-        
+        let formattedContent = try base.makeContent(for: output, path: path, site: _site)
+        let title = base.frontMatter.title
+
         let post = Post(url: "\(_site.url)\(path.asURIPath)",
                         title: title,
                         content: formattedContent,
@@ -112,19 +103,57 @@ struct PostController {
     
     //MARK: - Private
     private let _site: SiteConfig
-    
-    private func makeContentForLongPostInMicroblogFeed(title: String?, path: PostPath) -> String {
-        let postHref = "\(_site.url.appendingPathComponent(path.asURIPath))"
-        var output = "New post from \(_site.title): "
-        
+}
+
+private extension BasePost {
+    func makeContent(for outputType: TextOutputType, path: PostPath, site: SiteConfig) throws -> String {
+        switch outputType {
+        case .fullText:
+            let assetsPath = PathHelper.makeBundleAssetsPath(filename: path.asFilename, location: .posts)
+            let formattedContent = try FileProcessor.processMarkdownText(content, for: assetsPath)
+            return formattedContent
+        case .microblog:
+            if isMicropost {
+                return makeMicropostContent(with: path, site: site)
+            }
+            else {
+                return makeContentForLongPostInMicroblogFeed(title: frontMatter.title, path: path, site: site)
+            }
+        }
+    }
+
+    private var isMicropost: Bool {
+        let hasTitle = frontMatter.title != nil
+        return hasTitle == false && frontMatter.isMicroblog
+    }
+
+    private func makeContentForLongPostInMicroblogFeed(title: String?, path: PostPath, site: SiteConfig) -> String {
+        let postHref = "\(site.url.appendingPathComponent(path.asURIPath))"
+        var output = "New post from \(site.title): "
+
         if let title = title {
             output.append("[\(title)](\(postHref))")
         }
         else {
             output.append(postHref)
         }
-        
+
         output = try! markdownToHTML(output)
+        return output
+    }
+
+    private func makeMicropostContent(with path: PostPath, site: SiteConfig) -> String {
+        var output = ""
+
+        let firstPart = String(content.prefix(250))
+        let postHref = "\(site.url.appendingPathComponent(path.asURIPath))"
+
+        output = """
+        \(firstPart)...
+
+        \(postHref)
+        """
+
         return output
     }
 }
