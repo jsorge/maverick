@@ -35,7 +35,7 @@ struct Post: Codable {
     init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?)
     {
         self.date = frontMatter.date
-        self.formattedDate = Post.dateFormatter.string(from: frontMatter.timeZoneAdjustedDate)
+        self.formattedDate = Post.dateFormatter.string(from: frontMatter.date)
         self.url = url
         self.title = title
         self.content = content
@@ -75,14 +75,6 @@ struct FrontMatter: Codable {
     let isStaticPage: Bool
     let shortDescription: String
 
-    var timeZoneAdjustedDate: Date {
-        let offset = Calendar.current.timeZone.secondsFromGMT(for: self.date)
-        guard let adjustedDate = Calendar.current.date(byAdding: .second, value: offset, to: self.date)
-            else { return self.date }
-
-        return adjustedDate
-    }
-    
     private enum CodingKeys: String, CodingKey {
         case isMicroblog = "microblog"
         case title = "title"
