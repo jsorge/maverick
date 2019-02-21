@@ -63,7 +63,7 @@ struct FeedOutput {
             posts.append(post)
         }
 
-        return posts
+        return posts.sorted(by: { $0.date > $1.date })
     }
 
     static var allOutputsAndGenerators: [(generator: FeedGenerator.Type, output: TextOutputType)] {
