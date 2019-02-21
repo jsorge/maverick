@@ -6,33 +6,37 @@
 //
 
 import Foundation
-import Logging
 
-typealias Markdown = String
+public typealias Markdown = String
 
-struct BasePost {
-    let frontMatter: FrontMatter
-    let content: Markdown
+public struct BasePost {
+    public let frontMatter: FrontMatter
+    public let content: Markdown
+
+    public init(frontMatter: FrontMatter, content: Markdown) {
+        self.frontMatter = frontMatter
+        self.content = content
+    }
 }
 
-struct Post: Codable {
+public struct Post: Codable {
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter
     }()
-    
-    let date: Date
-    let formattedDate: String
-    let url: String
-    let title: String?
-    let content: String
-    let isBlogPost: Bool
-    let frontMatter: FrontMatter
-    let path: PostPath?
-    let shortDescription: String?
-    
-    init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?)
+
+    public let date: Date
+    public let formattedDate: String
+    public let url: String
+    public let title: String?
+    public let content: String
+    public let isBlogPost: Bool
+    public let frontMatter: FrontMatter
+    public let path: PostPath?
+    public let shortDescription: String?
+
+    public init(url: String, title: String?, content: String, frontMatter: FrontMatter, path: PostPath?)
     {
         self.date = frontMatter.date
         self.formattedDate = Post.dateFormatter.string(from: frontMatter.date)
@@ -46,8 +50,8 @@ struct Post: Codable {
     }
 }
 
-struct FrontMatter: Codable {
-    static let dateFormatter: ISO8601DateFormatter = {
+public struct FrontMatter: Codable {
+    public static let dateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [ .withInternetDateTime ]
         return formatter
@@ -66,14 +70,14 @@ struct FrontMatter: Codable {
         ]
         return formatter
     }()
-    
-    let isMicroblog: Bool
-    let title: String?
-    let layout: String?
-    let guid: String?
-    let date: Date
-    let isStaticPage: Bool
-    let shortDescription: String
+
+    public let isMicroblog: Bool
+    public let title: String?
+    public let layout: String?
+    public let guid: String?
+    public let date: Date
+    public let isStaticPage: Bool
+    public let shortDescription: String
 
     private enum CodingKeys: String, CodingKey {
         case isMicroblog = "microblog"
@@ -84,8 +88,8 @@ struct FrontMatter: Codable {
         case isStaticPage = "staticpage"
         case shortDescription = "shortdescription"
     }
-    
-    init(from decoder: Decoder) throws {
+
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.isMicroblog = try container.decodeIfPresent(Bool.self, forKey: .isMicroblog) ?? false
         self.title = try container.decodeIfPresent(String.self, forKey: .title)
@@ -93,7 +97,7 @@ struct FrontMatter: Codable {
         self.guid = try container.decodeIfPresent(String.self, forKey: .guid)
         self.isStaticPage = try container.decodeIfPresent(Bool.self, forKey: .isStaticPage) ?? false
         self.shortDescription = try container.decodeIfPresent(String.self, forKey: .shortDescription) ?? ""
-        
+
         // Dates are finicky.
         // Dates now need to be in internet time (RFC 3339)
         // We initially expected them to come in in `2018-07-11 06:29:36` format
@@ -102,7 +106,7 @@ struct FrontMatter: Codable {
         let date: Date
         if let parsedDate = FrontMatter.dateFormatter.date(from: dateString) {
             date = parsedDate
-            
+
         }
         else if let parsedDate = FrontMatter.deprecatedFormatter.date(from: dateString) {
             date = parsedDate
@@ -112,7 +116,6 @@ struct FrontMatter: Codable {
         }
         else {
             date = Date()
-            MaverickLogger.shared?.error("Error parsing date: \(dateString), for: \(self.title ?? "untitled")")
         }
         self.date = date
     }

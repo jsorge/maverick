@@ -7,6 +7,7 @@
 
 import Foundation
 import Leaf
+import MaverickModels
 import SwiftMarkdown
 import Vapor
 

@@ -8,30 +8,30 @@
 import Foundation
 
 /// Data about the whole site
-struct SiteConfig: Codable {
+public struct SiteConfig: Codable {
     /// Goes in the `meta name=description` tag.
-    let metaDescription: String
+    public let metaDescription: String
     /// The title that goes in the header on the page (i.e. "jsorge.net" or "Inessential").
-    let title: String
+    public let title: String
     /// The description that goes below the title in the header.
     /// (i.e. "Christian, husbend, dad, developer, batman afficianado")
-    let description: String
+    public let description: String
     /// The base URL of the site.
-    let url: URL
+    public let url: URL
     /// The number of posts to include when listing posts
-    let batchSize: Int
+    public let batchSize: Int
     /// The number of posts included in the feeds
-    let feedSize: Int
+    public let feedSize: Int
     /// Upon adding a new post, ping these URLS so that the proper feeds are refreshed
-    var sitesToPing: [URL]?
+    public var sitesToPing: [URL]?
     /// The year to go in the footer.
-    let year: String = {
+    public let year: String = {
         let calendar = Calendar.current
         let date = Date()
         return "\(calendar.component(.year, from: date))"
     }()
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(metaDescription, forKey: .metaDescription)
         try container.encode(title, forKey: .title)

@@ -8,28 +8,28 @@
 import Foundation
 import PathKit
 
-struct PostPath: Codable, Comparable {
-    let year: Int
-    let month: Int
-    let day: Int
-    let slug: String
+public struct PostPath: Codable, Comparable {
+    public let year: Int
+    public let month: Int
+    public let day: Int
+    public let slug: String
     
-    var asURIPath: String {
+    public var asURIPath: String {
         return "/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))/\(slug)"
     }
     
-    var asFilename: String {
+    public var asFilename: String {
         return "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))-\(slug)"
     }
     
-    init(year: Int, month: Int, day: Int, slug: String) {
+    public init(year: Int, month: Int, day: Int, slug: String) {
         self.year = year
         self.month = month
         self.day = day
         self.slug = slug
     }
     
-    init?(path: Path) {
+    public init?(path: Path) {
         // ignore hidden files
         guard path.lastComponent.starts(with: ".") == false else { return nil }
         
@@ -50,7 +50,7 @@ struct PostPath: Codable, Comparable {
         self.slug = String(slug)
     }
     
-    static func < (lhs: PostPath, rhs: PostPath) -> Bool {
+    public static func < (lhs: PostPath, rhs: PostPath) -> Bool {
         if lhs.year < rhs.year {
             return true
         }

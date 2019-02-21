@@ -7,16 +7,16 @@
 
 import Foundation
 
-enum CodingError: Error {
+public enum CodingError: Error {
     case decoding(message: String)
 }
 
-struct Page: Codable {
-    enum Style: Codable {
+public struct Page: Codable {
+    public enum Style: Codable {
         case single(post: Post)
         case list(list: PostList)
         
-        init(from decoder: Decoder) throws {
+        public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             if let post = try? container.decode(Post.self, forKey: .post) {
@@ -28,7 +28,7 @@ struct Page: Codable {
             throw CodingError.decoding(message: "Decoding error: \(dump(container))")
         }
         
-        func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
             case .list(let list):
@@ -44,7 +44,13 @@ struct Page: Codable {
         }
     }
     
-    let style: Style
-    let site: SiteConfig
-    let title: String
+    public let style: Style
+    public let site: SiteConfig
+    public let title: String
+
+    public init (style: Style, site: SiteConfig, title: String) {
+        self.style = style
+        self.site = site
+        self.title = title
+    }
 }
