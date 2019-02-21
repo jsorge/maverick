@@ -127,6 +127,8 @@ private extension BasePost {
         return hasTitle == false && frontMatter.isMicroblog
     }
 
+    private var microPostMaxLength: Int { return 280 }
+
     private func makeContentForLongPostInMicroblogFeed(title: String?, path: PostPath, site: SiteConfig) -> String {
         let postHref = "\(site.url.appendingPathComponent(path.asURIPath))"
         var output = "New post from \(site.title): "
@@ -145,8 +147,10 @@ private extension BasePost {
     private func makeMicropostContent(with path: PostPath, site: SiteConfig) -> String {
         var output = ""
 
-        let firstPart = String(content.prefix(250))
+        let padding = 5 // the number of characters represenging the `...\n\n` part of the post
         let postHref = "\(site.url.appendingPathComponent(path.asURIPath))"
+        let postCharactersToTake = microPostMaxLength - postHref.count - padding
+        let firstPart = String(content.prefix(postCharactersToTake))
 
         output = """
         \(firstPart)...
