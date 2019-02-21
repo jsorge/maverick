@@ -15,12 +15,6 @@ struct BasePost {
     let content: Markdown
 }
 
-extension BasePost {
-    var isMicropostLength: Bool {
-        return content.count <= 280
-    }
-}
-
 struct Post: Codable {
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
