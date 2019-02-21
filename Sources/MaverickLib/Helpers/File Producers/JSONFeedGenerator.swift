@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MaverickModels
 import SwiftMarkdown
 
 struct JSONFeedGenerator: FeedGenerator {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MaverickModels
 import Micropub
 import TextBundleify
 import PathKit
