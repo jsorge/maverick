@@ -11,6 +11,10 @@ import MaverickModels
 import SwiftMarkdown
 import Vapor
 
+enum PostControllerError: Error {
+    case doesNotContainRequestedTag
+}
+
 struct SinglePostRouteCollection: RouteCollection {
     let config: SiteConfig
     
@@ -88,9 +92,13 @@ struct PostController {
         _site = site
     }
     
-    func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType) throws -> Post {
+    func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType, tag: String? = nil) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: path.asFilename, in: .posts)
-        
+
+        if let tag = tag {
+            guard base.frontMatter.tags.contains(tag) else { throw PostControllerError.doesNotContainRequestedTag }
+        }
+
         let formattedContent = try base.makeContent(for: output, path: path, site: _site)
         let title = base.frontMatter.title
 
