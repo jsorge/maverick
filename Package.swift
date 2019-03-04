@@ -3,9 +3,6 @@ import PackageDescription
 
 let package = Package(
     name: "Maverick",
-    products: [
-        .library(name: "MaverickModels", targets: ["MaverickModels"]),
-    ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.2.2"),
         .package(url: "https://github.com/vapor/leaf.git", from: "3.0.2"),
@@ -13,6 +10,7 @@ let package = Package(
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor-community/markdown.git", from: "0.4.0"),
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
+        .package(url: "https://github.com/jsorge/maverick-models.git", .branch("master")),
     ],
     targets: [
     	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
@@ -25,7 +23,6 @@ let package = Package(
                                             "Vapor",
                                             "Yams"]),
         .target(name: "Maverick", dependencies: ["MaverickLib"]),
-        .target(name: "MaverickModels", dependencies: ["PathKit"]),
         .testTarget(name: "MaverickLibTests", dependencies: [
         	"MaverickLib",
         	"PathKit",
