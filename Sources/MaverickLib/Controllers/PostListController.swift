@@ -41,22 +41,12 @@ struct PostListRouteCollection: RouteCollection {
             let outputPage = try fetchPostList(for: page, config: config)
             return leaf.render("index", outputPage)
         }
-
-        router.get("tag", String.parameter) { req -> Future<View> in
-            let config = try SiteConfigController.fetchSite()
-            let leaf = try req.make(LeafRenderer.self)
-            let tag = try req.parameters.next(String.self)
-            let postList = try PostListController.fetchPostsForTag(tag, config: config)
-            let outputPage = Page(style: .list(list: postList), site: config, title: config.title)
-            return leaf.render("index", outputPage)
-        }
     }
 }
 
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
         let allPostPaths = try PathHelper.pathsForAllPosts()
-        
         let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
 
         let batchStart = (pageNumber - 1) * config.batchSize
@@ -100,20 +90,6 @@ struct PostListController {
                                     olderLink: olderLink,
                                     pageNumber: "\(pageNumber) of \(pageCount)")
         
-        let postList = PostList(posts: posts, pagination: pagination)
-        return postList
-    }
-
-    static func fetchPostsForTag(_ tag: String, config: SiteConfig) throws -> PostList {
-        let allPostPaths = try PathHelper.pathsForAllPosts()
-        let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
-
-        let postController = PostController(site: config)
-        let posts = postsPaths
-            .compactMap({ try? postController.fetchPost(withPath: $0, outputtingFor: .fullText, tag: tag) })
-            .sorted(by: { $0.date > $1.date })
-
-        let pagination = Pagination(newerLink: nil, olderLink: nil, pageNumber: "1 of 1")
         let postList = PostList(posts: posts, pagination: pagination)
         return postList
     }

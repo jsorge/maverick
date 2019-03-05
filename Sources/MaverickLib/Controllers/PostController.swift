@@ -92,7 +92,7 @@ struct PostController {
         _site = site
     }
     
-    func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType, tag: String? = nil) throws -> Post {
+    func fetchPost(withPath path: PostPath, outputtingFor output: TextOutputType, tag: Tag? = nil) throws -> Post {
         let base = try FileReader.attemptToReadFile(named: path.asFilename, in: .posts)
 
         if let tag = tag {

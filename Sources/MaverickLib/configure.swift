@@ -32,6 +32,8 @@ public func configure(
     middleware.use(files)
     
     services.register(middleware)
+
+    SiteContentChangeResponderManager.shared.registerResponder(SitePinger())
 }
 
 private final class MaverickLeafProvider: Provider {
