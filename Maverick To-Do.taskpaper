@@ -1,44 +1,11 @@
-- Support drafts @done
 	- Add a new path `https://blog.com/draft/slug-goes-here @done
 	- When the draft becomes a post, the draft URL should redirect properly @done
+Tags:
+	- add feeds for tags
+		* Find all the tags used in posts, make a feed for each
 API:
 	- micropub
 		- confirm login
 		- create posts @done
 		- resolve images @done
 	- XML RPC
-Routing:
-	- add get routes for posts @done
-		- fix rendering output. Works on statics but not on posts @done
-	- archive pages @done
-	- static pages @done
-	1. Request comes in for /2018/04/08/hawaii-trip/
-	1. Determine the textbundle filename from the path
-	1. Look up the file in Public/_posts
-	1. Parse the frontmatter to determine the layout
-	1. Resolve the image links in the markdown to `../<filename>/assets/<imagename>`
-	1. Convert the markdown to html
-	1. Pass the data to the theme
-Bugs:
-		- Add symbolication to crash logs
-			https://stackoverflow.com/questions/44954314/swift-debugging-on-linux-missing-backtrace#44956167
-	- dates aren't working anywhere @done
-		- footer @done
-		- above a post title @done
-	- pagination not wired correctly @done
-	- ordering of post lists isn't correct @done
-	- can a route be removed?
-	Caching:
-		- Figure out how to cache the rendered theme (if that’s possible) @nonblocker
-		The way I think caching would work is that when a page is requested, the cache gets checked. If it’s there then return the cached version. If it’s not, create it, cache it, and return it.
-		Cache should apply to all pages. When a new post is created the cache goes away completely for rebuilding.
-Publishing:
-	- write blog post
-Development Strategy:
-		I think the Maverick repo should be only for the application; no blog content should ever live here. The implications of that are that there needs to be some `make dev` step that can take the contents of a repo and `curl` it into a "dev" folder or something like that. The Vapor code around Public paths would have to be #if DEBUG #else #endif` fenced to get this working.
-		
-		Then there would be a site repo which pulls from the built image that is made from the main app repo. It's so crazy it just might work :)
-	- script downloading a site and shoving into _dev folder @done
-		- remove existing _dev folder before downloading @done
-	- Upadate maverick code to look for DEBUG conditions where using the filesystem @done
-	- Update nginx configs @done

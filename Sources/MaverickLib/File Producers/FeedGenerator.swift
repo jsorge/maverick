@@ -45,7 +45,7 @@ struct FeedOutput {
         }
 
         if changed {
-            try sendPingsIfNeeded(config: site)
+            try SiteContentChangeResponderManager.shared.respondToContentChange()
         }
 
         return changed
@@ -82,9 +82,11 @@ struct FeedOutput {
     private static var allGenerators: [FeedGenerator.Type] {
         return [JSONFeedGenerator.self, RSSFeedGenerator.self]
     }
+}
 
-    private static func sendPingsIfNeeded(config: SiteConfig) throws {
-        guard let pingURLS = config.sitesToPing else { return }
+struct SitePinger: SiteContentChangeResponder {
+    func respondToSiteContentChange(site: SiteConfig) {
+        guard let pingURLS = site.sitesToPing else { return }
 
         for url in pingURLS {
             var request = URLRequest(url: url)

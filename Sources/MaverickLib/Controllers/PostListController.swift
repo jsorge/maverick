@@ -47,7 +47,6 @@ struct PostListRouteCollection: RouteCollection {
 struct PostListController {
     static func fetchPostList(forPageNumber pageNumber: Int, config: SiteConfig) throws -> PostList {
         let allPostPaths = try PathHelper.pathsForAllPosts()
-        
         let postsPaths = allPostPaths.compactMap({ PostPath(path: $0) })
 
         let batchStart = (pageNumber - 1) * config.batchSize
