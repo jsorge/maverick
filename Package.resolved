@@ -77,9 +77,9 @@
         "package": "MaverickModels",
         "repositoryURL": "https://github.com/jsorge/maverick-models.git",
         "state": {
-          "branch": "master",
-          "revision": "ca8ed03213c7cd44294a7b5497185a30cbca38ce",
-          "version": null
+          "branch": null,
+          "revision": "03b95d898353b8817d6a57f1ca7ed675a5b2bdea",
+          "version": "1.0.0"
         }
       },
       {
