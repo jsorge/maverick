@@ -10,7 +10,7 @@ let package = Package(
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor-community/markdown.git", from: "0.4.0"),
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
-        .package(url: "https://github.com/jsorge/maverick-models.git", .branch("master")),
+        .package(url: "https://github.com/jsorge/maverick-models.git", from: "1.0.0"),
     ],
     targets: [
     	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
