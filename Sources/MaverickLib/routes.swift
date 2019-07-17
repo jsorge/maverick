@@ -13,4 +13,5 @@ public func routes(_ router: Router) throws {
     try router.register(collection: PostListRouteCollection(config: config))
     try router.register(collection: SinglePostRouteCollection(config: config))
     try router.register(collection: TagController())
+    try router.register(collection: AdminRouteCollection())
 }
