@@ -77,3 +77,4 @@ _dev/*
 nginx/*
 .tools/*
 tools/nginx/*
+.swiftpm/*

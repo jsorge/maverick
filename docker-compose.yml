@@ -24,8 +24,7 @@ services:
       - 443:443
     volumes:
       - ./Public:/home/maverick/Public
-      - ./.tools/nginx/ssl:/var/www/ssl
-      - ./.tools/nginx/logs:/var/log/nginx
+      - ./_dev/.tools/nginx/ssl:/var/www/ssl
+      - ./_dev/.tools/nginx/logs:/var/log/nginx
     depends_on:
       - maverick
-  

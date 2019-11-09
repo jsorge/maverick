@@ -30,12 +30,13 @@ struct PathHelper {
     }
     
     static var root: Path = {
+        let root = Path(DirectoryConfig.detect().workDir)
+
         if isDebug() {
-            return Path(DirectoryConfig.detect().workDir) + Path("_dev")
+            return root + Path("_dev")
         }
-        else {
-            return Path(DirectoryConfig.detect().workDir)
-        }
+
+        return root
     }()
     
     static var publicFolderPath: Path = {

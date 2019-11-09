@@ -1,4 +1,5 @@
 @testable import MaverickLib
+import MaverickModels
 import PathKit
 import TextBundleify
 import XCTest

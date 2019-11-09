@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import MaverickModels
 import PathKit
 import SwiftMarkdown
@@ -33,14 +36,14 @@ struct FileProcessor {
     }
     
     static func attemptToLinkImagesToPosts(imagePaths paths: [Path]) throws {
-        func textbundleNameThatContainsImage(named filename: String) -> String? {
+        func textbundleNameThatContainsImage(named filename: String) throws -> String? {
             let task = Process()
             let pipe = Pipe()
             
-            task.launchPath = "/usr/bin/grep"
+            task.executableURL = URL(string: "/usr/bin/grep")
             task.arguments = ["-r", filename, "/Users/jsorge/Develop/maverick/Public/_posts"]
             task.standardOutput = pipe
-            task.launch()
+            try task.run()
             
             let handle = pipe.fileHandleForReading
             let data = handle.readDataToEndOfFile()
@@ -60,7 +63,7 @@ struct FileProcessor {
 
         
         for path in paths {
-            guard let bundleName = textbundleNameThatContainsImage(named: path.lastComponent) else { continue }
+            guard let bundleName = try textbundleNameThatContainsImage(named: path.lastComponent) else { continue }
             let root = PathHelper.publicFolderPath
             let bundlePath = root
                 + Path(String(PathHelper.makeBundleAssetsPath(filename: bundleName, location: .posts)

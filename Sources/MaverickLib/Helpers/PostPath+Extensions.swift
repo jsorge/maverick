@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import MaverickModels
 import PathKit
 
@@ -14,7 +17,7 @@ extension PostPath {
         // ignore hidden files
         guard path.lastComponent.starts(with: ".") == false else { return nil }
 
-        var components = path.lastComponentWithoutExtension.split(separator: "-")
+        let components = path.lastComponentWithoutExtension.split(separator: "-")
         // ensure that the file name was formatted correctly for a post
         guard components.count > 3 else { return nil }
 

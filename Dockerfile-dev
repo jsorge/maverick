@@ -1,3 +1,4 @@
-FROM swift:4.2
-RUN apt-get -qq update && apt-get -q -y install \
+FROM swift:5.1.1
+RUN apt-get -qq update && apt-get install -y \
+  libssl-dev zlib1g-dev \
   && rm -r /var/lib/apt/lists/*
