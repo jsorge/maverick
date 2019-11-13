@@ -143,11 +143,16 @@ private extension BasePost {
         var output = "New post from \(site.title): "
 
         if let title = title {
-            output.append("[\(title)](\(postHref))")
+            output.append(title)
         }
         else {
             output.append(postHref)
         }
+
+        output.append("""
+
+        \(postHref)
+        """)
 
         output = try! markdownToHTML(output)
         return output
@@ -167,6 +172,7 @@ private extension BasePost {
         \(postHref)
         """
 
+        output = try! markdownToHTML(output)
         return output
     }
 }
