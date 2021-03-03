@@ -52,11 +52,23 @@ private func runRepeatedTask(_ app: Application) {
     _ = app.eventLoopGroup.next().scheduleTask(in: .seconds(10)) {
         do {
             try FeedOutput.makeAllTheFeeds()
+        }
+        catch {
+            MaverickLogger.shared?.error("Something went wrong making the feeds: \(error)")
+        }
+
+        do {
             try StaticPageRouter.updateStaticRoutes()
+        }
+        catch {
+            MaverickLogger.shared?.error("Something went wrong updating static routes: \(error)")
+        }
+
+        do {
             try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
         }
         catch {
-            MaverickLogger.shared?.error("Something on the timer went wrong: \(error)")
+            MaverickLogger.shared?.error("Something went wrong linking images to posts: \(error)")
         }
 
         runRepeatedTask(app)
