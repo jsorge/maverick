@@ -18,7 +18,6 @@ let package = Package(
         .package(name: "SwiftMarkdown", url: "https://github.com/vapor-community/markdown.git", from: "0.6.1"),
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
         .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.2.0"),
-        .package(url: "https://github.com/dduan/Pathos.git", from: "0.2.1")
     ],
     targets: [
         .target(
@@ -51,7 +50,7 @@ let package = Package(
         .target(
             name: "MaverickModels",
                 dependencies: [
-                    "Pathos",
+                    "PathKit",
                 ]
         ),
         .testTarget(

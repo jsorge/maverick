@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Pathos
+import PathKit
 
 public enum FileReaderError: Error {
     case unreadableFile(String)
@@ -18,10 +18,10 @@ public struct TextBundleReader {
         let infoPath = path + Path("info.json")
         let textPath = path + Path("text.md")
 
-        let markdown = try textPath.readUTF8String()
+        let markdown: String = try textPath.read()
+        let bundleData: Data = try infoPath.read()
 
         guard
-            let bundleData = try infoPath.readUTF8String().data(using: .utf8),
             let bundleInfo = BundleInfo(json: bundleData),
             let frontMatter = bundleInfo.frontMatter else
         {

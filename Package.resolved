@@ -83,15 +83,6 @@
         }
       },
       {
-        "package": "Pathos",
-        "repositoryURL": "https://github.com/dduan/Pathos.git",
-        "state": {
-          "branch": null,
-          "revision": "ba0a4c73ded94511b85c149311104c001c32d120",
-          "version": "0.4.0"
-        }
-      },
-      {
         "package": "routing-kit",
         "repositoryURL": "https://github.com/vapor/routing-kit.git",
         "state": {
