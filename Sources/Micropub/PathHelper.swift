@@ -3,7 +3,7 @@ import Vapor
 
 struct PathHelper {
     static var root: Path {
-        return Path(DirectoryConfig.detect().workDir)
+        return Path(DirectoryConfiguration.detect().workingDirectory)
     }
     
     static var authedServicesPath: Path {

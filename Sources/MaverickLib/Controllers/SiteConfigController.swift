@@ -21,9 +21,8 @@ struct SiteConfigController {
             data = SiteConfig.defaultData
         }
         
-        
         guard let congfigStr = String(data: data, encoding: .utf8)
-            else { throw FileReaderError.unreadableFile }
+            else { throw FileReaderError.unreadableFile("SiteConfig") }
         
         let decoder = YAMLDecoder()
         let config = try decoder.decode(SiteConfig.self, from: congfigStr)

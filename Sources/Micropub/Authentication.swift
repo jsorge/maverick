@@ -5,13 +5,13 @@ import Vapor
 struct AuthHelper {
     static func authenticateRequest(_ req: Request) -> Bool {
         let tokens = fetchAllAuthTokens()
-        if let authHeader = req.http.headers.firstValue(name: .authorization) {
+        if let authHeader = req.headers.first(name: .authorization) {
             let split = authHeader.split(separator: " ")
             guard let token = split.last else { return false }
             return tokens.contains(String(token))
         }
         else {
-            guard let auth = try? req.content.syncDecode(PostBodyAuth.self) else { return false }
+            guard let auth = try? req.content.decode(PostBodyAuth.self) else { return false }
             return tokens.contains(auth.accessToken)
         }
     }

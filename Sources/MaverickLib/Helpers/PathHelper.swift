@@ -30,7 +30,7 @@ struct PathHelper {
     }
     
     static var root: Path = {
-        let root = Path(DirectoryConfig.detect().workDir)
+        let root = Path(DirectoryConfiguration.detect().workingDirectory)
 
         if isDebug() {
             return root + Path("_dev")

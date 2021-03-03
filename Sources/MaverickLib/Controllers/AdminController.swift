@@ -10,18 +10,16 @@ import ShellOut
 import Vapor
 
 struct AdminRouteCollection: RouteCollection {
-    func boot(router: Router) throws {
+    func boot(routes router: RoutesBuilder) throws {
         let adminRouter = router.grouped("_admin")
 
-        adminRouter.get("reload") { req -> Future<Response> in
-            return Future.map(on: req, {
-                if AdminController.reloadActionTriggered() {
-                    return req.response(http: HTTPResponse(status: .ok))
-                }
-                else {
-                    return req.response(http: HTTPResponse(status: .internalServerError))
-                }
-            })
+        adminRouter.get("reload") { req -> Response in
+            if AdminController.reloadActionTriggered() {
+                return Response(status: .ok)
+            }
+            else {
+                return Response(status: .internalServerError)
+            }
         }
     }
 }
@@ -29,7 +27,7 @@ struct AdminRouteCollection: RouteCollection {
 struct AdminController {
     static func reloadActionTriggered() -> Bool {
         do {
-            let workDir = DirectoryConfig.detect().workDir
+            let workDir = DirectoryConfiguration.detect().workingDirectory
             try shellOut(to: .gitPull(remote: "origin", branch: "master"), at: workDir)
             return true
         }

@@ -20,8 +20,8 @@ services:
     environment:
       CA_SSL: "false" # change to "true" for production
     ports:
-      - 80:80
-      - 443:443
+      - 9080:80
+      - 9043:443
     volumes:
       - ./Public:/home/maverick/Public
       - ./_dev/.tools/nginx/ssl:/var/www/ssl

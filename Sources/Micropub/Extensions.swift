@@ -14,8 +14,8 @@ extension UUID {
     }
 }
 
-extension HTTPHeaderName {
-    static var authorization = HTTPHeaderName("Authorization")
+extension HTTPHeaders.Name {
+    static var authorization = HTTPHeaders.Name("Authorization")
 }
 
 extension String {

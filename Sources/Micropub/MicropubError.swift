@@ -16,7 +16,7 @@ public enum MicropubError: String, Error {
     case UnsupportedHProperty
 }
 
-extension MicropubError: Debuggable {
+extension MicropubError: DebuggableError {
     public var identifier: String {
         return rawValue
     }

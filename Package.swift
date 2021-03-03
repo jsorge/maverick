@@ -1,41 +1,67 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
     name: "Maverick",
     platforms: [
-        .macOS(.v10_14),
+        .macOS(.v10_15),
     ],
     products: [
         .executable(name: "Maverick", targets: ["Maverick"]),
+        .library(name: "MaverickModels", targets: ["MaverickModels"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "3.3.1"),
-        .package(url: "https://github.com/vapor/leaf.git", from: "3.0.2"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.41.1"),
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.0.1"),
         .package(url: "https://github.com/kylef/PathKit.git", from: "0.9.1"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.0"),
-        .package(url: "https://github.com/vapor-community/markdown.git", from: "0.4.0"),
+        .package(name: "SwiftMarkdown", url: "https://github.com/vapor-community/markdown.git", from: "0.6.1"),
         .package(url: "https://github.com/jsorge/textbundleify.git", .branch("master")),
-        .package(url: "https://github.com/jsorge/maverick-models.git", from: "2.2.0"),
         .package(url: "https://github.com/JohnSundell/ShellOut.git", from: "2.2.0"),
+        .package(url: "https://github.com/dduan/Pathos.git", from: "0.2.1")
     ],
     targets: [
-    	.target(name: "Micropub", dependencies: ["PathKit", "Vapor"]),
-        .target(name: "MaverickLib", dependencies: ["Leaf",
-                                            "MaverickModels",
-                                            "Micropub",
-                                            "ShellOut",
-                                            "SwiftMarkdown",
-                                            "TextBundleify",
-                                            "PathKit",
-                                            "Vapor",
-                                            "Yams"]),
-        .target(name: "Maverick", dependencies: ["MaverickLib"]),
-        .testTarget(name: "MaverickLibTests", dependencies: [
-        	"MaverickLib",
-        	"PathKit",
-        	"TextBundleify",
-        ]),
+        .target(
+            name: "Micropub",
+            dependencies: [
+                "PathKit",
+                .product(name: "Vapor", package: "vapor"),
+            ]
+        ),
+        .target(
+            name: "MaverickLib",
+            dependencies: [
+                .product(name: "Leaf", package: "leaf"),
+                "MaverickModels",
+                "Micropub",
+                "ShellOut",
+                "SwiftMarkdown",
+                .product(name: "TextBundleify", package: "textbundleify"),
+                "PathKit",
+                .product(name: "Vapor", package: "vapor"),
+                "Yams"
+            ]
+        ),
+        .target(
+            name: "Maverick",
+            dependencies: [
+                "MaverickLib"
+            ]
+        ),
+        .target(
+            name: "MaverickModels",
+                dependencies: [
+                    "Pathos",
+                ]
+        ),
+        .testTarget(
+            name: "MaverickLibTests",
+            dependencies: [
+                "MaverickLib",
+                "PathKit",
+                .product(name: "TextBundleify", package: "textbundleify"),
+            ]
+        ),
     ],
     swiftLanguageVersions: [
         .v5,

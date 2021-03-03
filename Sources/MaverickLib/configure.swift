@@ -1,82 +1,65 @@
-import Core
 import Leaf
-import Service
-import TemplateKit
+import LeafKit
+import Logging
 import Vapor
 
 /// Called before your application initializes.
-///
-/// [Learn More →](https://docs.vapor.codes/3.0/getting-started/structure/#configureswift)
-public func configure(
-    _ config: inout Config,
-    _ env: inout Environment,
-    _ services: inout Services
-) throws {
+public func configure(_ app: Application) throws {
     // Register routes to the router
-    let router = EngineRouter(caseInsensitive: true)
-    try routes(router)
-    services.register(router, as: Router.self)
+    try registerRoutes(app)
 
     // Configure the rest of your application here
-    try services.register(MaverickLeafProvider())
-
-    var middleware = MiddlewareConfig.default()
+    app.leaf.configuration = MaverickLeafProvider.config
+    app.views.use(.leaf)
     
     let files: FileMiddleware
+    let workingDir = DirectoryConfiguration.detect().workingDirectory
     if isDebug() {
-        files = FileMiddleware(publicDirectory: "\(DirectoryConfig.detect().workDir)/_dev/Public")
+        files = FileMiddleware(publicDirectory: "\(workingDir)/_dev/Public")
     }
     else {
-        files = FileMiddleware(publicDirectory: "\(DirectoryConfig.detect().workDir)/Public")
+        files = FileMiddleware(publicDirectory: "\(workingDir)/Public")
     }
-    middleware.use(files)
-    
-    services.register(middleware)
+    app.middleware.use(files)
 
     SiteContentChangeResponderManager.shared.registerResponder(SitePinger())
+
+    try PathHelper.prepTheTemporaryPaths()
+    MaverickLogger.shared = app.logger
+    runRepeatedTask(app)
 }
 
-private final class MaverickLeafProvider: Provider {
-    /// See Service.Provider.repositoryName
-    public static let repositoryName = "leaf"
-    
-    public init() {}
-    
-    /// See Service.Provider.Register
-    public func register(_ services: inout Services) throws {
-        services.register([TemplateRenderer.self, ViewRenderer.self]) { container -> LeafRenderer in
-            let config = try container.make(LeafConfig.self)
-            return LeafRenderer(
-                config: config,
-                using: container
-            )
+private enum MaverickLeafProvider {
+    static var config: LeafConfiguration {
+        let workingDir = DirectoryConfiguration.detect().workingDirectory
+        let viewsDir: String
+        if isDebug() {
+            viewsDir = workingDir + "_dev/Resources/Views"
         }
-        
-        services.register { container -> LeafConfig in
-            let dir = try container.make(DirectoryConfig.self)
-            let viewsDir: String
-            if isDebug() {
-                viewsDir = dir.workDir + "_dev/Resources/Views"
-            }
-            else {
-                viewsDir = dir.workDir + "Resources/Views"
-            }
-            
-            return try LeafConfig(
-                tags: container.make(),
-                viewsDir: viewsDir,
-                shouldCache: container.environment != .development
-            )
+        else {
+            viewsDir = workingDir + "Resources/Views"
         }
-        
-        services.register { container -> LeafTagConfig in
-            return LeafTagConfig.default()
-        }
+
+        let configuration = LeafConfiguration(
+            rootDirectory: viewsDir
+        )
+
+        return configuration
     }
-    
-    /// See Service.Provider.boot
-    public func didBoot(_ container: Container) throws -> Future<Void> {
-        return .done(on: container)
+}
+
+private func runRepeatedTask(_ app: Application) {
+    _ = app.eventLoopGroup.next().scheduleTask(in: .seconds(10)) {
+        do {
+            try FeedOutput.makeAllTheFeeds()
+            try StaticPageRouter.updateStaticRoutes()
+            try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
+        }
+        catch {
+            MaverickLogger.shared?.error("Something on the timer went wrong: \(error)")
+        }
+
+        runRepeatedTask(app)
     }
 }
 

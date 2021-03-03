@@ -21,7 +21,8 @@ struct MicropubHelper {
             guard let file = file else { return nil }
             let incomingPath = PathHelper.incomingMediaPath
             let filepath = incomingPath + Path(file.filename)
-            try filepath.write(file.data)
+            let data = Data(file.data.readableBytesView)
+            try filepath.write(data)
 
             // TODO: Run some method that attempts to embed the files in their textbundles
             return site.url.appendingPathComponent(file.filename).absoluteString

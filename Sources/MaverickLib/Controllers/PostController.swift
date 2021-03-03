@@ -22,29 +22,27 @@ struct SinglePostRouteCollection: RouteCollection {
         self.config = config
     }
     
-    func boot(router: Router) throws {
-        func attemptToFindPost(withSlug slug: String, for req: Request) throws -> Future<Response> {
+    func boot(routes: RoutesBuilder) throws {
+        func attemptToFindPost(withSlug slug: String, for req: Request) throws -> EventLoopFuture<Response> {
             let posts = try PathHelper.pathsForAllPosts()
             guard let filePath = posts.filter({ $0.lastComponentWithoutExtension.contains(slug) }).first,
                 let postPath = PostPath(path: filePath) else {
-                    return Future.map(on: req) {
-                        return req.response(http: HTTPResponse(status: .notFound))
-                    }
+                let response = Response(status: .notFound)
+                return req.eventLoop.makeSucceededFuture(response)
             }
             
             let urlPath = self.config.url.appendingPathComponent(postPath.asURIPath)
-            return Future.map(on: req) {
-                return req.redirect(to: urlPath.absoluteString, type: .permanent)
-            }
+            let response = req.redirect(to: urlPath.absoluteString, type: .permanent)
+            return req.eventLoop.makeSucceededFuture(response)
         }
         
-        router.get(Int.parameter, Int.parameter, Int.parameter, String.parameter) { req -> Future<Response> in
-            let leaf = try req.make(LeafRenderer.self)
-            
-            let year = try req.parameters.next(Int.self)
-            let month = try req.parameters.next(Int.self)
-            let day = try req.parameters.next(Int.self)
-            let slug = try req.parameters.next(String.self)
+        routes.get(":year", ":month", ":day", ":slug") { req -> EventLoopFuture<Response> in
+            let year = try req.parameters.require("year", as: Int.self)
+            let month = try req.parameters.require("month", as: Int.self)
+            let day = try req.parameters.require("day", as: Int.self)
+            let slug = try req.parameters.require("slug")
+
+            let leaf = req.leaf
             let path = PostPath(year: year, month: month, day: day, slug: slug)
             
             do {
@@ -52,11 +50,12 @@ struct SinglePostRouteCollection: RouteCollection {
                 let post = try postController.fetchPost(withPath: path, outputtingFor: .fullText)
                 let outputPage = Page(style: .single(post: post), site: self.config, title: post.title ?? self.config.title)
                 
-                var response = HTTPResponse()
-                response.contentType = .html
+                let response = Response()
+                response.headers.contentType = .html
                 return leaf.render("post", outputPage).map { view -> Response in
-                    response.body = HTTPBody(data: view.data)
-                    return req.response(http: response)
+                    let data = Data(view.data.readableBytesView)
+                    response.body = Response.Body(data: data)
+                    return response
                 }
             }
             catch {
@@ -64,20 +63,24 @@ struct SinglePostRouteCollection: RouteCollection {
             }
         }
         
-        router.get("draft", String.parameter) { req -> Future<Response> in
-            let leaf = try req.make(LeafRenderer.self)
-            let slug = try req.parameters.next(String.self)
+        routes.get("draft", ":slug") { req -> EventLoopFuture<Response> in
+            let leaf = req.leaf
+            guard let slug = req.parameters.get("slug") else {
+                let response = Response(status: .notFound)
+                return req.eventLoop.makeSucceededFuture(response)
+            }
             
             do {
                 let post = try StaticPageController.fetchStaticPage(named: slug, in: .drafts, for: self.config)
                 let outputPage = Page(style: .single(post: post), site: self.config,
                                       title: post.title ?? self.config.title)
                 
-                var response = HTTPResponse()
-                response.contentType = .html
+                let response = Response()
+                response.headers.contentType = .html
                 return leaf.render("post", outputPage).map { view -> Response in
-                    response.body = HTTPBody(data: view.data)
-                    return req.response(http: response)
+                    let data = Data(view.data.readableBytesView)
+                    response.body = Response.Body(data: data)
+                    return response
                 }
             }
             catch {

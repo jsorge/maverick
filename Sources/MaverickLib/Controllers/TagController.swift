@@ -14,26 +14,26 @@ import Vapor
 final class TagController: RouteCollection {
     init() {}
 
-    func boot(router: Router) throws {
+    func boot(routes: RoutesBuilder) throws {
         SiteContentChangeResponderManager.shared.registerResponder(TagCache.shared)
 
-        router.get("tag", Tag.parameter) { req -> Future<View> in
+        routes.get("tag", ":tag") { req -> EventLoopFuture<View> in
             let siteConfig = try SiteConfigController.fetchSite()
 
-            let leaf = try req.make(LeafRenderer.self)
-            let tag = try req.parameters.next(Tag.self)
+            let leaf = req.leaf
+            let tag = try req.parameters.require("tag")
             let postList = try self.fetchPostsForTag(tag, pageNumber: nil, siteConfig: siteConfig)
             let outputPage = Page(style: .list(list: postList), site: siteConfig,
                                   title: siteConfig.title)
             return leaf.render("index", outputPage)
         }
 
-        router.get("tag", Tag.parameter, Int.parameter) { req -> Future<View> in
+        routes.get("tag", ":tag", ":page") { req -> EventLoopFuture<View> in
             let siteConfig = try SiteConfigController.fetchSite()
 
-            let leaf = try req.make(LeafRenderer.self)
-            let tag = try req.parameters.next(Tag.self)
-            let page = try req.parameters.next(Int.self)
+            let leaf = req.leaf
+            let tag = try req.parameters.require("tag")
+            let page = try req.parameters.require("page", as: Int.self)
             let postList = try self.fetchPostsForTag(tag, pageNumber: page, siteConfig: siteConfig)
             let outputPage = Page(style: .list(list: postList), site: siteConfig,
                                   title: siteConfig.title)

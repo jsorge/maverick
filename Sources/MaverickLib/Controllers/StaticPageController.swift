@@ -13,25 +13,25 @@ import Vapor
 
 struct StaticPageRouter: RouteCollection {
     private static var site: SiteConfig?
-    private static var router: Router?
+    private static var router: RoutesBuilder?
     private static var pageManager = StaticPageManager()
     
     init(siteConfig site: SiteConfig) {
         StaticPageRouter.site = site
     }
     
-    func boot(router: Router) throws {
+    func boot(routes router: RoutesBuilder) throws {
         StaticPageRouter.router = router
         try StaticPageRouter.updateStaticRoutes()
     }
     
     static func updateStaticRoutes() throws {
         guard let router = router, let config = site else { return }
-        
+
         let newPages = try pageManager.updatePaths()
         for page in newPages {
-            router.get(page) { req -> Future<View> in
-                let leaf = try req.make(LeafRenderer.self)
+            router.get(PathComponent.constant(page)) { req -> EventLoopFuture<View> in
+                let leaf = req.leaf
                 let post = try StaticPageController.fetchStaticPage(named: page, in: .pages, for: StaticPageRouter.site!)
                 let outputPage = Page(style: .single(post: post), site: config, title: post.title ?? config.title)
                 return leaf.render("post", outputPage)

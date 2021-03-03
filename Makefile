@@ -4,7 +4,6 @@
 # Needs packages pkg-config & libressl via homebrew on mac
 # Needs libssl-dev & pkg-config on Linux
 
-PROJECT   ?= Maverick.xcodeproj
 CONTAINER ?= jsorge/maverick
 TAG       := $$(git describe --tags)
 IMG       := ${CONTAINER}:${TAG}
@@ -25,17 +24,6 @@ down:
 .PHONY: docker-run
 docker-run:
 	swift run Maverick serve -b 0.0.0.0
-
-project: $(PROJECT)
-
-$(PROJECT):
-	swift package generate-xcodeproj \
-		--xcconfig-overrides settings.xcconfig \
-		--output $(PROJECT)
-
-.PHONY: update
-update:
-	swift package update
 
 .PHONY: docker-build
 docker-build:

@@ -1,0 +1,9 @@
+{
+  "actions" : {
+    "run" : {
+      "enabled" : true,
+      "script" : "make dev\nmake up"
+    }
+  },
+  "identifier" : "5F8680EC-F1F1-4073-8859-027E37E7D332"
+}
