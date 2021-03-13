@@ -52,6 +52,7 @@ private func runRepeatedTask(_ app: Application) {
     _ = app.eventLoopGroup.next().scheduleTask(in: .seconds(10)) {
         do {
             try FeedOutput.makeAllTheFeeds()
+            print("Feeds have been made")
         }
         catch {
             MaverickLogger.shared?.error("Something went wrong making the feeds: \(error)")
@@ -59,6 +60,7 @@ private func runRepeatedTask(_ app: Application) {
 
         do {
             try StaticPageRouter.updateStaticRoutes()
+            print("Static routes have been updated")
         }
         catch {
             MaverickLogger.shared?.error("Something went wrong updating static routes: \(error)")
@@ -66,6 +68,7 @@ private func runRepeatedTask(_ app: Application) {
 
         do {
             try FileProcessor.attemptToLinkImagesToPosts(imagePaths: PathHelper.incomingMediaPath.children())
+            print("Images have been lined to posts from the incoming media path")
         }
         catch {
             MaverickLogger.shared?.error("Something went wrong linking images to posts: \(error)")

@@ -126,10 +126,10 @@ private extension BasePost {
             return formattedContent
         case .microblog:
             if isMicropost {
-                return makeMicropostContent(with: path, site: site)
+                return try makeMicropostContent(with: path, site: site)
             }
             else {
-                return makeContentForLongPostInMicroblogFeed(title: frontMatter.title, path: path, site: site)
+                return try makeContentForLongPostInMicroblogFeed(title: frontMatter.title, path: path, site: site)
             }
         }
     }
@@ -141,7 +141,7 @@ private extension BasePost {
 
     private var microPostMaxLength: Int { return 280 }
 
-    private func makeContentForLongPostInMicroblogFeed(title: String?, path: PostPath, site: SiteConfig) -> String {
+    private func makeContentForLongPostInMicroblogFeed(title: String?, path: PostPath, site: SiteConfig) throws -> String {
         let postHref = "\(site.url.appendingPathComponent(path.asURIPath))"
         var output = "New post from \(site.title): "
 
@@ -157,11 +157,11 @@ private extension BasePost {
         \(postHref)
         """)
 
-        output = try! markdownToHTML(output)
+        output = try markdownToHTML(output)
         return output
     }
 
-    private func makeMicropostContent(with path: PostPath, site: SiteConfig) -> String {
+    private func makeMicropostContent(with path: PostPath, site: SiteConfig) throws -> String {
         var output = ""
 
         let padding = 5 // the number of characters represenging the `...\n\n` part of the post
@@ -175,7 +175,7 @@ private extension BasePost {
         \(postHref)
         """
 
-        output = try! markdownToHTML(output)
+        output = try markdownToHTML(output)
         return output
     }
 }
