@@ -1,6 +1,7 @@
 import Leaf
 import LeafKit
 import Logging
+import MaverickModels
 import Vapor
 
 /// Called before your application initializes.
@@ -11,6 +12,13 @@ public func configure(_ app: Application) throws {
     // Configure the rest of your application here
     app.leaf.configuration = MaverickLeafProvider.config
     app.views.use(.leaf)
+
+    let siteConfig = try SiteConfigController.fetchSite()
+    if siteConfig.disablePageCaching {
+        app.leaf.cache.isEnabled = false
+    } else {
+        app.leaf.cache.isEnabled = true
+    }
     
     let files: FileMiddleware
     let workingDir = DirectoryConfiguration.detect().workingDirectory

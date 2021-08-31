@@ -11,8 +11,8 @@ let package = Package(
         .library(name: "MaverickModels", targets: ["MaverickModels"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.41.1"),
-        .package(url: "https://github.com/vapor/leaf.git", from: "4.0.1"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.48.4"),
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.1.2"),
         .package(url: "https://github.com/kylef/PathKit.git", from: "0.9.1"),
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.0"),
         .package(name: "SwiftMarkdown", url: "https://github.com/vapor-community/markdown.git", from: "0.6.1"),
