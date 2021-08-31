@@ -30,6 +30,8 @@ public struct SiteConfig: Codable {
         let date = Date()
         return "\(calendar.component(.year, from: date))"
     }()
+    /// Controls whether or not to cache the page templates. Defaults to false.
+    public let disablePageCaching: Bool
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -41,6 +43,19 @@ public struct SiteConfig: Codable {
         try container.encode(year, forKey: .year)
         try container.encode(feedSize, forKey: .feedSize)
         try container.encodeIfPresent(sitesToPing, forKey: .sitesToPing)
+        try container.encode(disablePageCaching, forKey: .disablePageCaching)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.metaDescription = try container.decode(String.self, forKey: .metaDescription)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.description = try container.decode(String.self, forKey: .description)
+        self.url = try container.decode(URL.self, forKey: .url)
+        self.batchSize = try container.decode(Int.self, forKey: .batchSize)
+        self.feedSize = try container.decode(Int.self, forKey: .feedSize)
+        self.sitesToPing = try container.decodeIfPresent([URL].self, forKey: .sitesToPing)
+        self.disablePageCaching = (try? container.decode(Bool.self, forKey: .disablePageCaching)) ?? false
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -52,5 +67,6 @@ public struct SiteConfig: Codable {
         case year
         case feedSize
         case sitesToPing
+        case disablePageCaching
     }
 }
